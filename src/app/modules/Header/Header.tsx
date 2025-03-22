@@ -2,7 +2,7 @@ import Image from "next/image";
 
 export default function Header() {
   return (
-    <div className="h-full w-full border-b-2 border-indigo-500 ">
+    <div className="h-full w-full border-b-2 border-violet-500 ">
       <div className="w-[15%] h-full flex gap-3 justify-center">
         <div className=" content-center">
           <Image
@@ -12,7 +12,7 @@ export default function Header() {
             alt="Picture of the author"
           />
         </div>
-        <span className="content-center text-pink-600">Salão da Leila</span>
+        <span className="content-center text-pink-600 font-bold">Salão da Leila</span>
       </div>
     </div>
   );
