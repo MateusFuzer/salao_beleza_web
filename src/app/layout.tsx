@@ -37,7 +37,7 @@ export default function RootLayout({
             <div className="w-[15%] h-full">
               <Aside />
             </div>
-            <main className="flex flex-1">{children}</main>
+            <main className="flex flex-1 p-4">{children}</main>
           </div>
         </div>
       </body>
