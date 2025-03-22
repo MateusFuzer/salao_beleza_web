@@ -1,3 +1,4 @@
+import FormularioAgendamento from "@/app/Components/FormularioAgendamento/FormularioAgendamento";
 import Tabela from "@/app/Components/Table/Table";
 import { Plus } from "lucide-react";
 
@@ -13,13 +14,20 @@ export default function Agendamentos(){
             </div>
 
             {/* AGENDAMENTOS QUE ESTAO EM ABERTO */}
-
+{/* 
             <div className="p-4 w-full bg-white rounded-md flex flex-1 flex-col">
                 <span className="text-gray-700 font-bold">Agendamentos em aberto</span>
                 <div>
                     <Tabela/>
                 </div>
+            </div> */}
+
+            {/* NOVO AGENDAMENTO */}
+            <div className="p-4 w-full bg-white rounded-md flex flex-1 flex-col">
+            <span className="text-gray-700 font-bold">Novo agendamento</span>
+                <FormularioAgendamento/>
             </div>
+
         </div>
     )
 }
