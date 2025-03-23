@@ -1,7 +1,7 @@
 'use client'
 import React, { useState } from 'react';
 import Modal from '../Modal/Modal';
-import { Pencil } from "lucide-react";
+import { Pencil, ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Agendamento {
     id: string;
@@ -17,6 +17,8 @@ interface Agendamento {
 interface TabelaProps {
     onEditar: (agendamento: Agendamento) => void;
 }
+
+const ITENS_POR_PAGINA = 5;
 
 const Tabela = ({ onEditar }: TabelaProps) => {
     // Atualizando o formato dos dados para corresponder à interface
@@ -53,8 +55,23 @@ const Tabela = ({ onEditar }: TabelaProps) => {
         }
     ];
 
+    const [paginaAtual, setPaginaAtual] = useState(1);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [agendamentoSelecionado, setAgendamentoSelecionado] = useState<Agendamento | null>(null);
+
+    // Cálculo para paginação
+    const totalPaginas = Math.ceil(dados.length / ITENS_POR_PAGINA);
+    const indiceInicial = (paginaAtual - 1) * ITENS_POR_PAGINA;
+    const indiceFinal = indiceInicial + ITENS_POR_PAGINA;
+    const dadosPaginados = dados.slice(indiceInicial, indiceFinal);
+
+    const handlePaginaAnterior = () => {
+        setPaginaAtual(pagina => Math.max(1, pagina - 1));
+    };
+
+    const handleProximaPagina = () => {
+        setPaginaAtual(pagina => Math.min(totalPaginas, pagina + 1));
+    };
 
     const handleCancelar = (agendamento: Agendamento) => {
         setAgendamentoSelecionado(agendamento);
@@ -97,7 +114,7 @@ const Tabela = ({ onEditar }: TabelaProps) => {
                         </tr>
                     </thead>
                     <tbody>
-                        {dados.map((item) => (
+                        {dadosPaginados.map((item) => (
                             <tr key={item.id} className="hover:bg-gray-50">
                                 <td className="px-6 py-4">{item.id}</td>
                                 <td className="px-6 py-4">{item.nome}</td>
@@ -127,6 +144,44 @@ const Tabela = ({ onEditar }: TabelaProps) => {
                         ))}
                     </tbody>
                 </table>
+
+                {/* Componente de Paginação */}
+                <div className="flex items-center justify-between px-6 py-3 bg-gray-50">
+                    <div className="flex items-center gap-2">
+                        <span className="text-sm text-gray-700">
+                            Mostrando {indiceInicial + 1} até {Math.min(indiceFinal, dados.length)} de {dados.length} registros
+                        </span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <button
+                            onClick={handlePaginaAnterior}
+                            disabled={paginaAtual === 1}
+                            className={`p-2 rounded-md ${
+                                paginaAtual === 1
+                                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                                : 'bg-violet-400 text-white hover:bg-violet-500'
+                            }`}
+                        >
+                            <ChevronLeft size={20} />
+                        </button>
+
+                        <span className="px-4 py-2 text-sm text-gray-700">
+                            Página {paginaAtual} de {totalPaginas}
+                        </span>
+
+                        <button
+                            onClick={handleProximaPagina}
+                            disabled={paginaAtual === totalPaginas}
+                            className={`p-2 rounded-md ${
+                                paginaAtual === totalPaginas
+                                ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
+                                : 'bg-violet-400 text-white hover:bg-violet-500'
+                            }`}
+                        >
+                            <ChevronRight size={20} />
+                        </button>
+                    </div>
+                </div>
             </div>
 
             {/* Modal de Confirmação de Cancelamento */}
