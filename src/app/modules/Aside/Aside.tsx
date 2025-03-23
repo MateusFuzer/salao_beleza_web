@@ -1,16 +1,37 @@
-import { ClipboardList, CalendarDays } from 'lucide-react';
+'use client'
+import { Calendar, Home, Settings } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from 'next/navigation';
 
-export default function Aside(){
-    return(
-        <div className="h-full w-full bg-violet-400">
-            <div className="p-2 text-white flex gap-2 cursor-pointer">
-                <CalendarDays color="white" size={20} />
-                <span className="font-bold">Agendamentos</span>
+export default function Aside() {
+    const pathname = usePathname();
+
+    const isSelected = (path: string) => {
+        return pathname === path ? 'bg-white text-violet-400' : 'text-white hover:bg-violet-500';
+    };
+
+    return (
+        <aside className="h-full w-[300px] bg-violet-400 rounded-md p-4 flex flex-col gap-4">
+            <span className="text-white font-bold">Menu</span>
+            <div className="flex flex-col gap-2">
+                <Link href="/">
+                    <button 
+                        className={`w-full p-2 rounded-md flex items-center gap-2 transition-colors ${isSelected('/')}`}
+                    >
+                        <Home size={20} />
+                        Home
+                    </button>
+                </Link>
+
+                <Link href="/agendamentos">
+                    <button 
+                        className={`w-full p-2 rounded-md flex items-center gap-2 transition-colors ${isSelected('/agendamentos')}`}
+                    >
+                        <Calendar size={20} />
+                        Agendamentos
+                    </button>
+                </Link>
             </div>
-            <div className="p-2 text-white flex gap-2 cursor-pointer">
-            <ClipboardList color="white" size={20} />
-            <span className="font-bold">Histórico de agendamentos</span>
-            </div>
-        </div>
-    )
+        </aside>
+    );
 }
