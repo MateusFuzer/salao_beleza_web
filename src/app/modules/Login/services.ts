@@ -7,12 +7,12 @@ export class AuthService {
         this.repository = new UsuarioRepository();
     }
 
-    login(email: string, senha: string): Usuario | null {
-        const usuario = this.repository.getByEmail(email);
+    login(usuario: string, senha: string): Usuario | null {
+        const usuarioEncontrado = this.repository.getByUsuario(usuario);
         
-        if (usuario && usuario.senha === senha) {
-            this.repository.setUsuarioLogado(usuario);
-            return usuario;
+        if (usuarioEncontrado && usuarioEncontrado.senha === senha) {
+            this.repository.setUsuarioLogado(usuarioEncontrado);
+            return usuarioEncontrado;
         }
         
         return null;

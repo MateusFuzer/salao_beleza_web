@@ -5,14 +5,14 @@ const usuariosPadrao: Usuario[] = [
     {
         id: '1',
         nome: 'Administrador',
-        email: 'admin@admin.com',
+        usuario: 'admin',
         senha: 'admin',
         tipo: 'ADMIN'
     },
     {
         id: '2',
         nome: 'Maria Silva',
-        email: 'maria@email.com',
+        usuario: 'maria',
         senha: '123456',
         tipo: 'USUARIO'
     }

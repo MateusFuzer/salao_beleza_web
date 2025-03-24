@@ -1,6 +1,7 @@
 export interface Usuario {
     id: string;
     nome: string;
+    usuario: string;
     email: string;
     senha: string;
     tipo: 'ADMIN' | 'USUARIO';
@@ -24,6 +25,11 @@ export class UsuarioRepository {
     getByEmail(email: string): Usuario | undefined {
         const usuarios = this.getAll();
         return usuarios.find(u => u.email === email);
+    }
+
+    getByUsuario(usuario: string): Usuario | undefined {
+        const usuarios = this.getAll();
+        return usuarios.find(u => u.usuario === usuario);
     }
 
     setUsuarioLogado(usuario: Usuario): void {

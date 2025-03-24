@@ -10,7 +10,7 @@ export default function Header() {
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loginData, setLoginData] = useState({
-    email: '',
+    usuario: '',
     senha: ''
   });
 
@@ -18,14 +18,14 @@ export default function Header() {
   const authService = new AuthService();
 
   const handleLogin = () => {
-    const usuarioLogado = authService.login(loginData.email, loginData.senha);
+    const usuarioLogado = authService.login(loginData.usuario, loginData.senha);
     
     if (usuarioLogado) {
       login(usuarioLogado);
       setShowLoginModal(false);
-      setLoginData({ email: '', senha: '' });
+      setLoginData({ usuario: '', senha: '' });
     } else {
-      alert('Email ou senha inválidos');
+      alert('Usuário ou senha inválidos');
     }
   };
 
@@ -66,7 +66,7 @@ export default function Header() {
               <div className="absolute right-0 top-12 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                 <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-200">
                   Logado como <br/>
-                  <strong>{usuario.email}</strong>
+                  <strong>{usuario.usuario}</strong>
                 </div>
                 <button
                   onClick={handleLogout}
@@ -94,14 +94,14 @@ export default function Header() {
                 <div className="flex flex-col gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Email
+                      Usuário
                     </label>
                     <input
-                      type="email"
-                      value={loginData.email}
-                      onChange={(e) => setLoginData(prev => ({ ...prev, email: e.target.value }))}
+                      type="text"
+                      value={loginData.usuario}
+                      onChange={(e) => setLoginData(prev => ({ ...prev, usuario: e.target.value }))}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-violet-400"
-                      placeholder="Digite seu email"
+                      placeholder="Digite seu usuário"
                     />
                   </div>
                   <div>
