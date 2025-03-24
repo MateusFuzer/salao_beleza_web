@@ -2,11 +2,12 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Usuario, UsuarioRepository } from '../modules/Login/repository';
 import { useRouter } from 'next/navigation';
+import { AuthService } from '../modules/Login/services';
 
 interface AuthContextType {
     usuario: Usuario | null;
     isAdmin: boolean;
-    login: (usuario: Usuario) => void;
+    login: (usuario: string, senha: string) => boolean;
     logout: () => void;
 }
 
@@ -16,6 +17,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [usuario, setUsuario] = useState<Usuario | null>(null);
     const [isAdmin, setIsAdmin] = useState(false);
     const repository = new UsuarioRepository();
+    const authService = new AuthService();
     const router = useRouter();
 
     useEffect(() => {
@@ -23,14 +25,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (usuarioLogado) {
             setUsuario(usuarioLogado);
             setIsAdmin(usuarioLogado.tipo === 'ADMIN');
+        } else {
+            router.push('/login');
         }
-    }, []);
+    }, [router]);
 
-    const login = (usuario: Usuario) => {
-        repository.setUsuarioLogado(usuario);
-        setUsuario(usuario);
-        setIsAdmin(usuario.tipo === 'ADMIN');
-        window.dispatchEvent(new Event('authChange'));
+    const login = (usuario: string, senha: string): boolean => {
+        const usuarioLogado = authService.login(usuario, senha);
+        if (usuarioLogado) {
+            setUsuario(usuarioLogado);
+            setIsAdmin(usuarioLogado.tipo === 'ADMIN');
+            window.dispatchEvent(new Event('authChange'));
+            return true;
+        }
+        return false;
     };
 
     const logout = () => {
@@ -38,7 +46,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUsuario(null);
         setIsAdmin(false);
         window.dispatchEvent(new Event('authChange'));
-        router.push('/agendamentos');
+        router.push('/login');
     };
 
     return (

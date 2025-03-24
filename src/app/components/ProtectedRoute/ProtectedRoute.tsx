@@ -17,7 +17,7 @@ export default function ProtectedRoute({ children, requireAdmin = false }: Prote
         // Aguarda um pequeno delay para garantir que o estado do usuário foi carregado
         const timer = setTimeout(() => {
             if (!usuario) {
-                router.push('/agendamentos');
+                router.push('/login');
             } else if (requireAdmin && !isAdmin) {
                 router.push('/agendamentos');
             }
