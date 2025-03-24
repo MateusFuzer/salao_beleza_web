@@ -1,30 +1,22 @@
 'use client'
 import FormularioAgendamento from "@/app/Components/FormularioAgendamento/FormularioAgendamento";
-import { Tabela, Agendamento as TabelaAgendamento } from "@/app/Components/Table/Table";
+import { Tabela, Agendamento } from "@/app/Components/Table/Table";
 import { ArrowLeft, Plus } from "lucide-react";
 import { useState } from "react";
 import Modal from "@/app/Components/Modal/Modal";
 
-interface Agendamento {
-    id: string;
-    data: string;
-    horario: string;
+interface AgendamentoForm extends Agendamento {
     cliente: string;
-    servico: string;
-    status: string;
-    nome: string;
-    telefone: string;
-    valor: number;
 }
 
 export default function Agendamentos(){
     const [ showFormularioDeAgendamento, setShowFormularioDeAgendamento ] = useState(false)
-    const [ agendamentoParaEditar, setAgendamentoParaEditar ] = useState<Agendamento | null>(null)
+    const [ agendamentoParaEditar, setAgendamentoParaEditar ] = useState<AgendamentoForm | null>(null)
     const [ isModalOpen, setIsModalOpen ] = useState(false);
-    const [ agendamentoParaCancelar, setAgendamentoParaCancelar ] = useState<Agendamento | null>(null);
+    const [ agendamentoParaCancelar, setAgendamentoParaCancelar ] = useState<AgendamentoForm | null>(null);
 
     const handleEditarAgendamento = (agendamento: Agendamento) => {
-        setAgendamentoParaEditar(agendamento)
+        setAgendamentoParaEditar({...agendamento, cliente: agendamento.nome})
         setShowFormularioDeAgendamento(true)
     }
 
@@ -34,7 +26,7 @@ export default function Agendamentos(){
     }
 
     const handleCancelar = (agendamento: Agendamento) => {
-        setAgendamentoParaCancelar(agendamento);
+        setAgendamentoParaCancelar({...agendamento, cliente: agendamento.nome});
         setIsModalOpen(true);
     };
 
@@ -65,8 +57,7 @@ export default function Agendamentos(){
             data: "2024-02-14",
             horario: "08:10",
             telefone: "14996145208", 
-            valor: 50,
-            cliente: 'Beatriz Valezio'
+            valor: 50
         }
     ];
 
