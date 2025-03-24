@@ -1,18 +1,29 @@
 import { Agendamento } from "../Agendamentos/repository";
 import { HistoricoRepository } from "./repository";
+import { UsuarioRepository } from "../Login/repository";
 
 export class HistoricoService {
     private repository: HistoricoRepository;
+    private usuarioRepository: UsuarioRepository;
 
     constructor() {
         this.repository = new HistoricoRepository();
+        this.usuarioRepository = new UsuarioRepository();
     }
 
     getAllAgendamentos(): Agendamento[] {
+        const usuarioLogado = this.usuarioRepository.getUsuarioLogado();
+        if (!usuarioLogado) return [];
+
         const agendamentos = this.repository.getAll();
         
-        // Ordena os agendamentos por data e hora (mais recentes primeiro)
-        return agendamentos.sort((a, b) => {
+        // Se for admin, retorna todo o histórico
+        // Se for usuário comum, retorna apenas o seu histórico
+        const agendamentosFiltrados = usuarioLogado.tipo === 'ADMIN'
+            ? agendamentos
+            : agendamentos.filter(ag => ag.usuarioId === usuarioLogado.id);
+
+        return agendamentosFiltrados.sort((a: Agendamento, b: Agendamento) => {
             const dataA = new Date(`${a.data}T${a.horario}`);
             const dataB = new Date(`${b.data}T${b.horario}`);
             return dataB.getTime() - dataA.getTime();

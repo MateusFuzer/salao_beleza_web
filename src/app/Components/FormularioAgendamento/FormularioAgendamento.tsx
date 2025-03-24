@@ -2,6 +2,7 @@
 import { useState, useEffect } from "react";
 import { AgendamentoController } from "@/app/modules/Agendamentos/controller";
 import { Agendamento } from "@/app/modules/Agendamentos/repository";
+import { UsuarioRepository } from "@/app/modules/Login/repository";
 
 interface FormularioAgendamentoProps {
     agendamento: Agendamento | null;
@@ -16,7 +17,18 @@ const FormularioAgendamento = ({ agendamento }: FormularioAgendamentoProps) => {
     const [valor, setValor] = useState(20);
 
     const controller = new AgendamentoController();
+    const usuarioRepository = new UsuarioRepository();
 
+    // Verifica usuário logado ao carregar o componente
+    useEffect(() => {
+        const usuarioLogado = usuarioRepository.getUsuarioLogado();
+        console.log('Usuário logado (useEffect):', usuarioLogado); // Debug
+        if (usuarioLogado) {
+            setNome(usuarioLogado.nome);
+        }
+    }, []);
+
+    // Preenche dados para edição
     useEffect(() => {
         if (agendamento) {
             setNome(agendamento.nome);
@@ -32,17 +44,31 @@ const FormularioAgendamento = ({ agendamento }: FormularioAgendamentoProps) => {
         e.preventDefault();
 
         try {
+            const usuarioLogado = usuarioRepository.getUsuarioLogado();
+            console.log('Usuário logado (handleSubmit):', usuarioLogado); // Debug
+            
+            if (!usuarioLogado || !usuarioLogado.id) {
+                // Vamos verificar o que está no localStorage
+                console.log('localStorage:', {
+                    usuarioLogado: localStorage.getItem('usuarioLogado'),
+                    usuarios: localStorage.getItem('usuarios')
+                });
+                alert('Você precisa estar logado para fazer um agendamento');
+                return;
+            }
+
             controller.handleSubmit({
                 nome,
                 telefone,
                 servico,
                 data,
                 horario: hora,
-                valor: Number(valor)
+                valor: Number(valor),
+                usuarioId: usuarioLogado.id // Passa o ID do usuário explicitamente
             }, agendamento?.id);
 
             // Limpa o formulário
-            setNome('');
+            setNome(usuarioLogado.nome); // Mantém o nome do usuário
             setTelefone('');
             setServico('Unha');
             setData('');
@@ -52,8 +78,12 @@ const FormularioAgendamento = ({ agendamento }: FormularioAgendamentoProps) => {
             alert('Agendamento salvo com sucesso!');
             window.location.reload();
         } catch (error) {
-            console.error('Erro:', error);
-            alert('Erro ao salvar agendamento. Tente novamente.');
+            console.error('Erro completo:', error); // Debug mais detalhado
+            if (error instanceof Error) {
+                alert(error.message);
+            } else {
+                alert('Erro ao salvar agendamento. Tente novamente.');
+            }
         }
     };
 

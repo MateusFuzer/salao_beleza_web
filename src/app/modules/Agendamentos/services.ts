@@ -1,4 +1,5 @@
 import { Agendamento, AgendamentoRepository } from './repository';
+import { UsuarioRepository } from '../Login/repository';
 
 // Interface para o agendamento com o campo cliente
 export interface AgendamentoComCliente extends Agendamento {
@@ -12,18 +13,31 @@ export interface NovoAgendamento {
     data: string;
     horario: string;
     valor: number;
+    usuarioId: string;
 }
 
 export class AgendamentoService {
     private repository: AgendamentoRepository;
+    private usuarioRepository: UsuarioRepository;
 
     constructor() {
         this.repository = new AgendamentoRepository();
+        this.usuarioRepository = new UsuarioRepository();
     }
 
     getAllAgendamentos(): Agendamento[] {
+        const usuarioLogado = this.usuarioRepository.getUsuarioLogado();
+        if (!usuarioLogado) return [];
+
         const agendamentos = this.repository.getAll();
-        return agendamentos.sort((a, b) => {
+        
+        // Se for admin, retorna todos os agendamentos
+        // Se for usuário comum, retorna apenas os seus
+        const agendamentosFiltrados = usuarioLogado.tipo === 'ADMIN' 
+            ? agendamentos 
+            : agendamentos.filter(ag => ag.usuarioId === usuarioLogado.id);
+
+        return agendamentosFiltrados.sort((a, b) => {
             const dataA = new Date(`${a.data}T${a.horario}`);
             const dataB = new Date(`${b.data}T${b.horario}`);
             return dataB.getTime() - dataA.getTime();
@@ -51,13 +65,11 @@ export class AgendamentoService {
         };
 
         if (id) {
-            // Atualiza agendamento existente
             const index = agendamentos.findIndex(a => a.id === id);
             if (index !== -1) {
                 agendamentos[index] = novoAgendamento;
             }
         } else {
-            // Adiciona novo agendamento
             agendamentos.push(novoAgendamento);
         }
 
@@ -74,13 +86,21 @@ export class AgendamentoService {
     }
 
     getAgendamentosEmAberto(): Agendamento[] {
+        const usuarioLogado = this.usuarioRepository.getUsuarioLogado();
+        if (!usuarioLogado) return [];
+
         const agendamentos = this.repository.getAll();
-        return agendamentos
-            .filter(agendamento => agendamento.status === 'Aberto')
-            .sort((a, b) => {
-                const dataA = new Date(`${a.data}T${a.horario}`);
-                const dataB = new Date(`${b.data}T${b.horario}`);
-                return dataB.getTime() - dataA.getTime();
-            });
+        
+        // Filtra por status aberto e aplica regra de permissão
+        const agendamentosFiltrados = (usuarioLogado.tipo === 'ADMIN' 
+            ? agendamentos 
+            : agendamentos.filter(ag => ag.usuarioId === usuarioLogado.id))
+            .filter(agendamento => agendamento.status === 'Aberto');
+
+        return agendamentosFiltrados.sort((a, b) => {
+            const dataA = new Date(`${a.data}T${a.horario}`);
+            const dataB = new Date(`${b.data}T${b.horario}`);
+            return dataB.getTime() - dataA.getTime();
+        });
     }
 } 

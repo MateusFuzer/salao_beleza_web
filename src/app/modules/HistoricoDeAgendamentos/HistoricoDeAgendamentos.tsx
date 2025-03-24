@@ -4,17 +4,33 @@ import Modal from "@/app/Components/Modal/Modal";
 import { useState, useEffect } from "react";
 import { Eye } from "lucide-react";
 import { HistoricoController } from "./controller";
+import { UsuarioRepository } from "../Login/repository";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 export default function HistoricoDeAgendamentos() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [agendamentoSelecionado, setAgendamentoSelecionado] = useState<Agendamento | null>(null);
     const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
-
+    const { isAdmin } = useAuth();
+    const usuarioRepository = new UsuarioRepository();
     const controller = new HistoricoController();
 
+    const loadAgendamentos = () => {
+        const agendamentosCarregados = controller.carregarTodosAgendamentos();
+        setAgendamentos(agendamentosCarregados);
+    };
+
     useEffect(() => {
-        const todosAgendamentos = controller.carregarTodosAgendamentos();
-        setAgendamentos(todosAgendamentos);
+        loadAgendamentos();
+    }, []);
+
+    useEffect(() => {
+        const handleAuthChange = () => {
+            loadAgendamentos();
+        };
+
+        window.addEventListener('authChange', handleAuthChange);
+        return () => window.removeEventListener('authChange', handleAuthChange);
     }, []);
 
     const handleVisualizarDetalhes = (agendamento: Agendamento) => {
@@ -50,7 +66,9 @@ export default function HistoricoDeAgendamentos() {
         <div className="h-full w-full bg-slate-200 rounded-md p-2 flex flex-col gap-4">
             <div className="p-4 w-full bg-white rounded-md flex flex-1 flex-col">
                 <div className="flex justify-between items-center mb-4">
-                    <span className="text-gray-700 font-bold">Histórico de Agendamentos</span>
+                    <span className="text-gray-700 font-bold">
+                        {isAdmin ? 'Histórico Completo de Agendamentos' : 'Meu Histórico de Agendamentos'}
+                    </span>
                     <span className="text-sm text-gray-500">
                         {agendamentos.length} agendamento(s) no total
                     </span>

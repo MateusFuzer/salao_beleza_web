@@ -11,6 +11,7 @@ export interface Agendamento {
     horario: string;
     valor: number;
     status: string;
+    usuarioId: string;
 }
 
 interface Column {

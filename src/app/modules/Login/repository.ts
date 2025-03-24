@@ -1,0 +1,51 @@
+export interface Usuario {
+    id: string;
+    nome: string;
+    email: string;
+    senha: string;
+    tipo: 'ADMIN' | 'USUARIO';
+}
+
+export class UsuarioRepository {
+    private STORAGE_KEY = 'usuarios';
+    private LOGGED_USER_KEY = 'usuarioLogado';
+
+    salvarUsuario(usuario: Usuario): void {
+        const usuarios = this.getAll();
+        usuarios.push(usuario);
+        localStorage.setItem(this.STORAGE_KEY, JSON.stringify(usuarios));
+    }
+
+    getAll(): Usuario[] {
+        const savedUsuarios = localStorage.getItem(this.STORAGE_KEY);
+        return savedUsuarios ? JSON.parse(savedUsuarios) : [];
+    }
+
+    getByEmail(email: string): Usuario | undefined {
+        const usuarios = this.getAll();
+        return usuarios.find(u => u.email === email);
+    }
+
+    setUsuarioLogado(usuario: Usuario): void {
+        localStorage.setItem(this.LOGGED_USER_KEY, JSON.stringify(usuario));
+    }
+
+    getUsuarioLogado(): Usuario | null {
+        const usuarioLogado = localStorage.getItem(this.LOGGED_USER_KEY);
+        console.log('getUsuarioLogado - raw data:', usuarioLogado); // Debug
+        if (!usuarioLogado) return null;
+        
+        try {
+            const usuario = JSON.parse(usuarioLogado);
+            console.log('getUsuarioLogado - parsed:', usuario); // Debug
+            return usuario;
+        } catch (error) {
+            console.error('Erro ao parsear usuário:', error);
+            return null;
+        }
+    }
+
+    logout(): void {
+        localStorage.removeItem(this.LOGGED_USER_KEY);
+    }
+} 

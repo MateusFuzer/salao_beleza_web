@@ -1,33 +1,37 @@
 'use client'
-import { User, X } from "lucide-react";
-import { useState } from "react";
+import { LogOut, User } from "lucide-react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
+import { AuthService } from "../Login/services";
+import { Usuario } from "../Login/repository";
+import { useAuth } from '@/app/contexts/AuthContext';
 
 export default function Header() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [showLoginModal, setShowLoginModal] = useState(false);
   const [loginData, setLoginData] = useState({
-    usuario: '',
+    email: '',
     senha: ''
   });
 
+  const { usuario, login, logout } = useAuth();
+  const authService = new AuthService();
+
   const handleLogin = () => {
-    // Aqui você implementará a lógica real de login
-    console.log('Dados de login:', loginData);
-    setIsLoggedIn(true);
-    setShowLoginModal(false);
-    setLoginData({ usuario: '', senha: '' });
+    const usuarioLogado = authService.login(loginData.email, loginData.senha);
+    
+    if (usuarioLogado) {
+      login(usuarioLogado);
+      setShowLoginModal(false);
+      setLoginData({ email: '', senha: '' });
+    } else {
+      alert('Email ou senha inválidos');
+    }
   };
 
   const handleLogout = () => {
-    setIsLoggedIn(false);
+    logout();
     setShowUserMenu(false);
-  };
-
-  const handleCancelarLogin = () => {
-    setShowLoginModal(false);
-    setLoginData({ usuario: '', senha: '' });
   };
 
   return (
@@ -47,14 +51,14 @@ export default function Header() {
       </div>
 
       <div className="relative">
-        {isLoggedIn ? (
+        {usuario ? (
           <div className="flex items-center gap-2">
             <button 
               onClick={() => setShowUserMenu(!showUserMenu)}
               className="flex items-center gap-2 bg-violet-400 text-white px-4 py-2 rounded-md hover:bg-violet-500 transition-colors"
             >
               <User size={20} />
-              <span>Maria Silva</span>
+              <span>{usuario.nome}</span>
             </button>
 
             {/* Menu dropdown do usuário logado */}
@@ -62,13 +66,13 @@ export default function Header() {
               <div className="absolute right-0 top-12 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                 <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-200">
                   Logado como <br/>
-                  <strong>Maria Silva</strong>
+                  <strong>{usuario.email}</strong>
                 </div>
                 <button
                   onClick={handleLogout}
                   className="flex items-center gap-2 w-full px-4 py-2 text-sm text-red-600 hover:bg-gray-100"
                 >
-                  <X size={16} />
+                  <LogOut size={16} />
                   Sair
                 </button>
               </div>
@@ -81,6 +85,7 @@ export default function Header() {
               className="flex items-center gap-2 bg-violet-400 text-white px-4 py-2 rounded-md hover:bg-violet-500 transition-colors"
             >
               <User size={20} />
+              Entrar
             </button>
 
             {/* Modal de Login */}
@@ -89,14 +94,14 @@ export default function Header() {
                 <div className="flex flex-col gap-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
-                      Usuário
+                      Email
                     </label>
                     <input
-                      type="text"
-                      value={loginData.usuario}
-                      onChange={(e) => setLoginData(prev => ({ ...prev, usuario: e.target.value }))}
+                      type="email"
+                      value={loginData.email}
+                      onChange={(e) => setLoginData(prev => ({ ...prev, email: e.target.value }))}
                       className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-1 focus:ring-violet-400"
-                      placeholder="Digite seu usuário"
+                      placeholder="Digite seu email"
                     />
                   </div>
                   <div>
@@ -113,7 +118,7 @@ export default function Header() {
                   </div>
                   <div className="flex gap-2 mt-2">
                     <button
-                      onClick={handleCancelarLogin}
+                      onClick={() => setShowLoginModal(false)}
                       className="flex-1 px-4 py-2 text-sm text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
                     >
                       Cancelar

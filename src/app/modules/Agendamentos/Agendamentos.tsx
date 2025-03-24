@@ -6,6 +6,8 @@ import { useState, useEffect } from "react";
 import Modal from "@/app/Components/Modal/Modal";
 import { AgendamentoController } from "./controller";
 import { AgendamentoComCliente } from './services';
+import { UsuarioRepository } from "../Login/repository";
+import { useAuth } from '@/app/contexts/AuthContext';
 
 interface AgendamentoForm extends Agendamento {
     cliente: string;
@@ -17,12 +19,28 @@ export default function Agendamentos() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [agendamentoParaCancelar, setAgendamentoParaCancelar] = useState<AgendamentoForm | null>(null);
     const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
+    const { isAdmin } = useAuth();
+    const usuarioRepository = new UsuarioRepository();
 
     const controller = new AgendamentoController();
 
-    useEffect(() => {
+    const loadAgendamentos = () => {
         const agendamentosCarregados = controller.carregarAgendamentosEmAberto();
         setAgendamentos(agendamentosCarregados);
+    };
+
+    useEffect(() => {
+        loadAgendamentos();
+    }, []);
+
+    useEffect(() => {
+        // Atualiza quando houver mudança na autenticação
+        const handleAuthChange = () => {
+            loadAgendamentos();
+        };
+
+        window.addEventListener('authChange', handleAuthChange);
+        return () => window.removeEventListener('authChange', handleAuthChange);
     }, []);
 
     const handleEditarAgendamento = (agendamento: Agendamento) => {
@@ -89,7 +107,9 @@ export default function Agendamentos() {
             {!showFormularioDeAgendamento && 
             <div className="p-4 w-full bg-white rounded-md flex flex-1 flex-col">
                 <div className="flex justify-between items-center mb-4">
-                    <span className="text-gray-700 font-bold">Agendamentos em aberto</span>
+                    <span className="text-gray-700 font-bold">
+                        {isAdmin ? 'Todos os Agendamentos em Aberto' : 'Meus Agendamentos em Aberto'}
+                    </span>
                     <span className="text-sm text-gray-500">
                         {agendamentos.length} agendamento(s) em aberto
                     </span>
@@ -111,7 +131,7 @@ export default function Agendamentos() {
                     {agendamentoParaEditar ? 'Editar agendamento' : 'Novo agendamento'}
                 </span>
                 <FormularioAgendamento 
-                    agendamento={agendamentoParaEditar}
+                    agendamento={agendamentoParaEditar as Agendamento | null}
                 />
             </div>
             }
