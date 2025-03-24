@@ -38,10 +38,13 @@ export const Tabela = ({ dados, colunas, onEditar, onCancelar, onConfirmar, onFi
     const [agendamentoSelecionado, setAgendamentoSelecionado] = useState<Agendamento | null>(null);
 
     // Cálculo para paginação
-    const totalPaginas = Math.ceil(dados.length / ITENS_POR_PAGINA);
+    const totalPaginas = Math.max(1, Math.ceil(dados.length / ITENS_POR_PAGINA));
     const indiceInicial = (paginaAtual - 1) * ITENS_POR_PAGINA;
     const indiceFinal = indiceInicial + ITENS_POR_PAGINA;
     const dadosPaginados = dados.slice(indiceInicial, indiceFinal);
+
+    const temProximaPagina = paginaAtual < totalPaginas && dados.length > 0;
+    const temPaginaAnterior = paginaAtual > 1;
 
     const handlePaginaAnterior = () => {
         setPaginaAtual(pagina => Math.max(1, pagina - 1));
@@ -151,15 +154,18 @@ export const Tabela = ({ dados, colunas, onEditar, onCancelar, onConfirmar, onFi
                 <div className="flex items-center justify-between px-6 py-3 bg-gray-50">
                     <div className="flex items-center gap-2">
                         <span className="text-sm text-gray-700">
-                            Mostrando {indiceInicial + 1} até {Math.min(indiceFinal, dados.length)} de {dados.length} registros
+                            {dados.length > 0 
+                                ? `Mostrando ${indiceInicial + 1} até ${Math.min(indiceFinal, dados.length)} de ${dados.length} registros`
+                                : 'Nenhum registro encontrado'
+                            }
                         </span>
                     </div>
                     <div className="flex items-center gap-2">
                         <button
                             onClick={handlePaginaAnterior}
-                            disabled={paginaAtual === 1}
+                            disabled={!temPaginaAnterior}
                             className={`p-2 rounded-md ${
-                                paginaAtual === 1
+                                !temPaginaAnterior
                                 ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                                 : 'bg-violet-400 text-white hover:bg-violet-500'
                             }`}
@@ -168,14 +174,14 @@ export const Tabela = ({ dados, colunas, onEditar, onCancelar, onConfirmar, onFi
                         </button>
 
                         <span className="px-4 py-2 text-sm text-gray-700">
-                            Página {paginaAtual} de {totalPaginas}
+                            {dados.length > 0 ? `Página ${paginaAtual} de ${totalPaginas}` : '-'}
                         </span>
 
                         <button
                             onClick={handleProximaPagina}
-                            disabled={paginaAtual === totalPaginas}
+                            disabled={!temProximaPagina}
                             className={`p-2 rounded-md ${
-                                paginaAtual === totalPaginas
+                                !temProximaPagina
                                 ? 'bg-gray-200 text-gray-500 cursor-not-allowed'
                                 : 'bg-violet-400 text-white hover:bg-violet-500'
                             }`}
