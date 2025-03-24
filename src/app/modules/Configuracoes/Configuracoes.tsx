@@ -5,16 +5,24 @@ import { Usuario } from '../Login/repository';
 import { ConfiguracoesController } from './controller';
 import Modal from '@/app/Components/Modal/Modal';
 
+interface FormData {
+    nome: string;
+    usuario: string;
+    email: string;
+    senha: string;
+    tipo: 'ADMIN' | 'USUARIO' | 'FUNCIONARIO';
+}
+
 export default function Configuracoes() {
     const [usuarios, setUsuarios] = useState<Usuario[]>([]);
     const [showModal, setShowModal] = useState(false);
     const [usuarioEmEdicao, setUsuarioEmEdicao] = useState<Usuario | null>(null);
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<FormData>({
         nome: '',
         usuario: '',
         email: '',
         senha: '',
-        tipo: 'USUARIO' as 'ADMIN' | 'USUARIO'
+        tipo: 'USUARIO'
     });
 
     const controller = new ConfiguracoesController();
@@ -187,11 +195,12 @@ export default function Configuracoes() {
                             <label className="block text-sm font-medium text-gray-700">Tipo</label>
                             <select
                                 value={formData.tipo}
-                                onChange={e => setFormData(prev => ({ ...prev, tipo: e.target.value as 'ADMIN' | 'USUARIO' }))}
+                                onChange={e => setFormData(prev => ({ ...prev, tipo: e.target.value as 'ADMIN' | 'USUARIO' | 'FUNCIONARIO' }))}
                                 className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-violet-500 focus:ring-violet-500"
                             >
                                 <option value="USUARIO">Usuário</option>
                                 <option value="ADMIN">Administrador</option>
+                                <option value="FUNCIONARIO">Funcionário</option>
                             </select>
                         </div>
                         <div className="flex justify-end gap-2 mt-6">

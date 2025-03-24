@@ -6,6 +6,7 @@ const usuariosPadrao: Usuario[] = [
         id: '1',
         nome: 'Administrador',
         usuario: 'admin',
+        email: 'admin@admin.com',
         senha: 'admin',
         tipo: 'ADMIN'
     },
@@ -13,6 +14,7 @@ const usuariosPadrao: Usuario[] = [
         id: '2',
         nome: 'Maria Silva',
         usuario: 'maria',
+        email: 'maria@email.com',
         senha: '123456',
         tipo: 'USUARIO'
     },
@@ -20,6 +22,7 @@ const usuariosPadrao: Usuario[] = [
         id: '3',
         nome: 'Funcionário',
         usuario: 'func',
+        email: 'func@email.com',
         senha: '123456',
         tipo: 'FUNCIONARIO'
     }

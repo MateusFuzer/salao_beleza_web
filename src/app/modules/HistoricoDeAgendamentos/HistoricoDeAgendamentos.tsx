@@ -1,17 +1,25 @@
 'use client'
-import { Tabela, Agendamento } from "@/app/Components/Table/Table";
+import { Tabela, Agendamento as TabelaAgendamento } from "@/app/Components/Table/Table";
 import Modal from "@/app/Components/Modal/Modal";
 import { useState, useEffect } from "react";
 import { Eye } from "lucide-react";
 import { HistoricoController } from "./controller";
 import { UsuarioRepository } from "../Login/repository";
 import { useAuth } from "@/app/contexts/AuthContext";
+import { StatusInfo } from "../Agendamentos/repository";
+
+interface HistoricoAgendamento extends TabelaAgendamento {
+    solicitadoPor: StatusInfo;
+    confirmadoPor?: StatusInfo;
+    finalizadoPor?: StatusInfo;
+    canceladoPor?: StatusInfo;
+}
 
 export default function HistoricoDeAgendamentos() {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [agendamentoSelecionado, setAgendamentoSelecionado] = useState<Agendamento | null>(null);
-    const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
-    const { isAdmin } = useAuth();
+    const [agendamentoSelecionado, setAgendamentoSelecionado] = useState<HistoricoAgendamento | null>(null);
+    const [agendamentos, setAgendamentos] = useState<HistoricoAgendamento[]>([]);
+    const { isAdmin, isFuncionario } = useAuth();
     const usuarioRepository = new UsuarioRepository();
     const controller = new HistoricoController();
 
@@ -33,32 +41,37 @@ export default function HistoricoDeAgendamentos() {
         return () => window.removeEventListener('authChange', handleAuthChange);
     }, []);
 
-    const handleVisualizarDetalhes = (agendamento: Agendamento) => {
+    const handleVisualizarDetalhes = (agendamento: HistoricoAgendamento) => {
         setAgendamentoSelecionado(agendamento);
         setIsModalOpen(true);
     };
 
     const colunas = [
-        { header: 'ID', accessor: 'id' as keyof Agendamento },
-        { header: 'Nome', accessor: 'nome' as keyof Agendamento },
-        { header: 'Status', accessor: 'status' as keyof Agendamento },
-        { header: 'Serviço', accessor: 'servico' as keyof Agendamento },
-        { header: 'Data', accessor: 'data' as keyof Agendamento },
-        { header: 'Hora', accessor: 'horario' as keyof Agendamento },
-        { header: 'Telefone', accessor: 'telefone' as keyof Agendamento },
-        { header: 'Valor', accessor: 'valor' as keyof Agendamento },
+        { header: 'ID', accessor: 'id' as keyof TabelaAgendamento },
+        { header: 'Nome', accessor: 'nome' as keyof TabelaAgendamento },
+        { header: 'Status', accessor: 'status' as keyof TabelaAgendamento },
+        { header: 'Serviço', accessor: 'servico' as keyof TabelaAgendamento },
+        { header: 'Data', accessor: 'data' as keyof TabelaAgendamento },
+        { header: 'Hora', accessor: 'horario' as keyof TabelaAgendamento },
+        { header: 'Telefone', accessor: 'telefone' as keyof TabelaAgendamento },
+        { header: 'Valor', accessor: 'valor' as keyof TabelaAgendamento },
         {
             header: 'Ação',
-            accessor: 'id' as keyof Agendamento,
-            render: (agendamento: Agendamento) => (
-                <button 
-                    onClick={() => handleVisualizarDetalhes(agendamento)}
-                    className="bg-blue-500 p-2 rounded-md text-white flex items-center gap-2 hover:bg-blue-600"
-                >
-                    <Eye size={16} />
-                    Visualizar
-                </button>
-            )
+            accessor: 'id' as keyof TabelaAgendamento,
+            render: (agendamento: TabelaAgendamento) => {
+                const agendamentoCompleto = agendamentos.find(a => a.id === agendamento.id);
+                if (!agendamentoCompleto) return null;
+                
+                return (
+                    <button 
+                        onClick={() => handleVisualizarDetalhes(agendamentoCompleto)}
+                        className="bg-blue-500 p-2 rounded-md text-white flex items-center gap-2 hover:bg-blue-600"
+                    >
+                        <Eye size={16} />
+                        Visualizar
+                    </button>
+                );
+            }
         }
     ];
 
@@ -75,97 +88,84 @@ export default function HistoricoDeAgendamentos() {
                 </div>
                 <div>
                     <Tabela 
-                        dados={agendamentos} 
+                        dados={agendamentos as TabelaAgendamento[]} 
                         colunas={colunas}
+                        isAdmin={isAdmin}
+                        isFuncionario={isFuncionario}
                     />
                 </div>
             </div>
 
-            {/* Modal de Detalhes */}
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
-                {agendamentoSelecionado && (
-                    <>
-                        <h3 className="text-xl font-semibold text-center mb-4">
-                            Detalhes do Agendamento
-                        </h3>
+                <div className="p-4">
+                    <h2 className="text-lg font-semibold mb-4">Detalhes do Agendamento</h2>
+                    {agendamentoSelecionado && (
                         <div className="space-y-4">
-                            <div className="bg-gray-50 p-4 rounded-lg">
-                                <p><strong>ID:</strong> {agendamentoSelecionado.id}</p>
-                                <p><strong>Nome:</strong> {agendamentoSelecionado.nome}</p>
-                                <p><strong>Serviço:</strong> {agendamentoSelecionado.servico}</p>
-                                <p><strong>Data:</strong> {agendamentoSelecionado.data}</p>
-                                <p><strong>Hora:</strong> {agendamentoSelecionado.horario}</p>
-                                <p><strong>Telefone:</strong> {agendamentoSelecionado.telefone}</p>
-                                <p><strong>Valor:</strong> R$ {agendamentoSelecionado.valor}</p>
-                                <p><strong>Status:</strong> {agendamentoSelecionado.status}</p>
-                                
-                                <div className="mt-4 space-y-4">
-                                    <div className="pt-4 border-t border-gray-200">
-                                        <h4 className="font-semibold text-gray-700 mb-2">Histórico do Agendamento</h4>
-                                        
-                                        <div className="space-y-3">
-                                            <div>
-                                                <p className="text-sm text-gray-600">Solicitado por</p>
-                                                <p><strong>{agendamentoSelecionado.solicitadoPor.nome}</strong></p>
-                                                <p className="text-sm text-gray-500">
-                                                    Em {agendamentoSelecionado.solicitadoPor.data} às {agendamentoSelecionado.solicitadoPor.hora}
-                                                </p>
-                                            </div>
-
-                                            {agendamentoSelecionado.confirmadoPor && (
-                                                <div>
-                                                    <p className="text-sm text-gray-600">Confirmado pela atendente</p>
-                                                    <p><strong>{agendamentoSelecionado.confirmadoPor.nome}</strong></p>
-                                                    <p className="text-sm text-gray-500">
-                                                        Em {agendamentoSelecionado.confirmadoPor.data} às {agendamentoSelecionado.confirmadoPor.hora}
-                                                    </p>
-                                                    {agendamentoSelecionado.confirmadoPor.observacao && (
-                                                        <p className="text-sm text-gray-600 mt-1">
-                                                            Obs: {agendamentoSelecionado.confirmadoPor.observacao}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            )}
-
-                                            {agendamentoSelecionado.finalizadoPor && (
-                                                <div>
-                                                    <p className="text-sm text-gray-600">Atendimento finalizado por</p>
-                                                    <p><strong>{agendamentoSelecionado.finalizadoPor.nome}</strong></p>
-                                                    <p className="text-sm text-gray-500">
-                                                        Em {agendamentoSelecionado.finalizadoPor.data} às {agendamentoSelecionado.finalizadoPor.hora}
-                                                    </p>
-                                                </div>
-                                            )}
-
-                                            {agendamentoSelecionado.canceladoPor && (
-                                                <div>
-                                                    <p className="text-sm text-gray-600">Cancelado por</p>
-                                                    <p><strong>{agendamentoSelecionado.canceladoPor.nome}</strong></p>
-                                                    <p className="text-sm text-gray-500">
-                                                        Em {agendamentoSelecionado.canceladoPor.data} às {agendamentoSelecionado.canceladoPor.hora}
-                                                    </p>
-                                                    {agendamentoSelecionado.canceladoPor.observacao && (
-                                                        <p className="text-sm text-gray-600 mt-1">
-                                                            Motivo: {agendamentoSelecionado.canceladoPor.observacao}
-                                                        </p>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
+                            <div className="grid grid-cols-2 gap-4">
+                                <div>
+                                    <p className="text-sm text-gray-500">Nome</p>
+                                    <p className="font-medium">{agendamentoSelecionado.nome}</p>
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-500">Telefone</p>
+                                    <p className="font-medium">{agendamentoSelecionado.telefone}</p>
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-500">Serviço</p>
+                                    <p className="font-medium">{agendamentoSelecionado.servico}</p>
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-500">Valor</p>
+                                    <p className="font-medium">R$ {agendamentoSelecionado.valor}</p>
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-500">Data</p>
+                                    <p className="font-medium">{agendamentoSelecionado.data}</p>
+                                </div>
+                                <div>
+                                    <p className="text-sm text-gray-500">Hora</p>
+                                    <p className="font-medium">{agendamentoSelecionado.horario}</p>
                                 </div>
                             </div>
-                            <div className="text-center mt-6">
-                                <button
-                                    onClick={() => setIsModalOpen(false)}
-                                    className="bg-blue-500 text-white py-2 px-4 rounded-md hover:bg-blue-600"
-                                >
-                                    Fechar
-                                </button>
+
+                            <div className="border-t pt-4">
+                                <h3 className="font-semibold mb-2">Status do Agendamento</h3>
+                                <div className="space-y-2">
+                                    <div>
+                                        <p className="text-sm text-gray-500">Solicitado por</p>
+                                        <p className="font-medium">
+                                            {agendamentoSelecionado.solicitadoPor.nome} em {agendamentoSelecionado.solicitadoPor.data} às {agendamentoSelecionado.solicitadoPor.hora}
+                                        </p>
+                                    </div>
+                                    {agendamentoSelecionado.confirmadoPor && (
+                                        <div>
+                                            <p className="text-sm text-gray-500">Confirmado por</p>
+                                            <p className="font-medium">
+                                                {agendamentoSelecionado.confirmadoPor.nome} em {agendamentoSelecionado.confirmadoPor.data} às {agendamentoSelecionado.confirmadoPor.hora}
+                                            </p>
+                                        </div>
+                                    )}
+                                    {agendamentoSelecionado.finalizadoPor && (
+                                        <div>
+                                            <p className="text-sm text-gray-500">Finalizado por</p>
+                                            <p className="font-medium">
+                                                {agendamentoSelecionado.finalizadoPor.nome} em {agendamentoSelecionado.finalizadoPor.data} às {agendamentoSelecionado.finalizadoPor.hora}
+                                            </p>
+                                        </div>
+                                    )}
+                                    {agendamentoSelecionado.canceladoPor && (
+                                        <div>
+                                            <p className="text-sm text-gray-500">Cancelado por</p>
+                                            <p className="font-medium">
+                                                {agendamentoSelecionado.canceladoPor.nome} em {agendamentoSelecionado.canceladoPor.data} às {agendamentoSelecionado.canceladoPor.hora}
+                                            </p>
+                                        </div>
+                                    )}
+                                </div>
                             </div>
                         </div>
-                    </>
-                )}
+                    )}
+                </div>
             </Modal>
         </div>
     );

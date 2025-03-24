@@ -1,6 +1,6 @@
 'use client'
 import FormularioAgendamento from "@/app/Components/FormularioAgendamento/FormularioAgendamento";
-import { Tabela, Agendamento } from "@/app/Components/Table/Table";
+import { Tabela, Agendamento as TabelaAgendamento } from "@/app/Components/Table/Table";
 import { ArrowLeft, Plus } from "lucide-react";
 import { useState, useEffect } from "react";
 import Modal from "@/app/Components/Modal/Modal";
@@ -8,16 +8,17 @@ import { AgendamentoController } from "./controller";
 import { AgendamentoComCliente } from './services';
 import { UsuarioRepository } from "../Login/repository";
 import { useAuth } from '@/app/contexts/AuthContext';
+import { Agendamento } from "./repository";
 
-interface AgendamentoForm extends Agendamento {
+interface AgendamentoForm extends TabelaAgendamento {
     cliente: string;
 }
 
 export default function Agendamentos() {
     const [showFormularioDeAgendamento, setShowFormularioDeAgendamento] = useState(false);
-    const [agendamentoParaEditar, setAgendamentoParaEditar] = useState<AgendamentoForm | null>(null);
+    const [agendamentoParaEditar, setAgendamentoParaEditar] = useState<Agendamento | null>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [agendamentoParaCancelar, setAgendamentoParaCancelar] = useState<AgendamentoForm | null>(null);
+    const [agendamentoParaCancelar, setAgendamentoParaCancelar] = useState<AgendamentoComCliente | null>(null);
     const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
     const [showConfirmModal, setShowConfirmModal] = useState(false);
     const [agendamentoParaConfirmar, setAgendamentoParaConfirmar] = useState<Agendamento | null>(null);
@@ -25,7 +26,6 @@ export default function Agendamentos() {
     const [agendamentoParaFinalizar, setAgendamentoParaFinalizar] = useState<Agendamento | null>(null);
     const { isAdmin, isFuncionario } = useAuth();
     const usuarioRepository = new UsuarioRepository();
-
     const controller = new AgendamentoController();
 
     const loadAgendamentos = () => {
@@ -47,10 +47,12 @@ export default function Agendamentos() {
         return () => window.removeEventListener('authChange', handleAuthChange);
     }, []);
 
-    const handleEditarAgendamento = (agendamento: Agendamento) => {
-        const agendamentoEditavel = controller.prepararAgendamentoParaEdicao(agendamento);
-        setAgendamentoParaEditar(agendamentoEditavel);
-        setShowFormularioDeAgendamento(true);
+    const handleEditarAgendamento = (agendamento: TabelaAgendamento) => {
+        const agendamentoCompleto = agendamentos.find(a => a.id === agendamento.id);
+        if (agendamentoCompleto) {
+            setAgendamentoParaEditar(agendamentoCompleto);
+            setShowFormularioDeAgendamento(true);
+        }
     };
 
     const handleVoltarParaLista = () => {
@@ -58,9 +60,16 @@ export default function Agendamentos() {
         setAgendamentoParaEditar(null);
     };
 
-    const handleCancelar = (agendamento: Agendamento) => {
-        setAgendamentoParaCancelar({...agendamento, cliente: agendamento.nome});
-        setIsModalOpen(true);
+    const handleCancelar = (agendamento: TabelaAgendamento) => {
+        const agendamentoCompleto = agendamentos.find(a => a.id === agendamento.id);
+        if (agendamentoCompleto) {
+            const agendamentoComCliente: AgendamentoComCliente = {
+                ...agendamentoCompleto,
+                cliente: agendamentoCompleto.nome
+            };
+            setAgendamentoParaCancelar(agendamentoComCliente);
+            setIsModalOpen(true);
+        }
     };
 
     const handleConfirmarCancelamento = () => {
@@ -73,14 +82,20 @@ export default function Agendamentos() {
         }
     };
 
-    const handleConfirmar = (agendamento: Agendamento) => {
-        setAgendamentoParaConfirmar(agendamento);
-        setShowConfirmModal(true);
+    const handleConfirmar = (agendamento: TabelaAgendamento) => {
+        const agendamentoCompleto = agendamentos.find(a => a.id === agendamento.id);
+        if (agendamentoCompleto) {
+            setAgendamentoParaConfirmar(agendamentoCompleto);
+            setShowConfirmModal(true);
+        }
     };
 
-    const handleFinalizar = (agendamento: Agendamento) => {
-        setAgendamentoParaFinalizar(agendamento);
-        setShowFinalizeModal(true);
+    const handleFinalizar = (agendamento: TabelaAgendamento) => {
+        const agendamentoCompleto = agendamentos.find(a => a.id === agendamento.id);
+        if (agendamentoCompleto) {
+            setAgendamentoParaFinalizar(agendamentoCompleto);
+            setShowFinalizeModal(true);
+        }
     };
 
     const handleConfirmarConfirmacao = () => {
@@ -118,14 +133,13 @@ export default function Agendamentos() {
     };
 
     const colunas = [
-        { header: 'ID', accessor: 'id' as keyof Agendamento },
-        { header: 'Nome', accessor: 'nome' as keyof Agendamento },
-        { header: 'Status', accessor: 'status' as keyof Agendamento },
-        { header: 'Serviço', accessor: 'servico' as keyof Agendamento },
-        { header: 'Data', accessor: 'data' as keyof Agendamento },
-        { header: 'Hora', accessor: 'horario' as keyof Agendamento },
-        { header: 'Telefone', accessor: 'telefone' as keyof Agendamento },
-        { header: 'Valor', accessor: 'valor' as keyof Agendamento }
+        { header: 'Nome', accessor: 'nome' as keyof TabelaAgendamento },
+        { header: 'Status', accessor: 'status' as keyof TabelaAgendamento },
+        { header: 'Serviço', accessor: 'servico' as keyof TabelaAgendamento },
+        { header: 'Data', accessor: 'data' as keyof TabelaAgendamento },
+        { header: 'Hora', accessor: 'horario' as keyof TabelaAgendamento },
+        { header: 'Telefone', accessor: 'telefone' as keyof TabelaAgendamento },
+        { header: 'Valor', accessor: 'valor' as keyof TabelaAgendamento }
     ];
 
     return (
@@ -164,7 +178,7 @@ export default function Agendamentos() {
                 </div>
                 <div>
                     <Tabela 
-                        dados={agendamentos} 
+                        dados={agendamentos as TabelaAgendamento[]} 
                         colunas={colunas} 
                         onEditar={handleEditarAgendamento}
                         onCancelar={handleCancelar}

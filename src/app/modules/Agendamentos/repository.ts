@@ -1,3 +1,5 @@
+import { Usuario } from '../Login/repository';
+
 export interface StatusInfo {
     nome: string;
     data: string;
@@ -38,12 +40,7 @@ export class AgendamentoRepository {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(agendamentos));
     }
 
-    updateStatus(
-        id: string, 
-        status: Agendamento['status'], 
-        usuario: Usuario,
-        observacao?: string
-    ): void {
+    updateStatus(id: string, status: Agendamento['status'], usuario: Usuario, observacao?: string): void {
         const agendamentos = this.getAll();
         const dataAtual = new Date();
         

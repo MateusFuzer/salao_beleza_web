@@ -36,7 +36,7 @@ export class AgendamentoController {
         this.service.alterarStatus(id, novoStatus, observacao);
     }
 
-    loadAgendamentos(): void {
+    loadAgendamentos(): Agendamento[] {
         return this.service.getAllAgendamentos();
     }
 } 

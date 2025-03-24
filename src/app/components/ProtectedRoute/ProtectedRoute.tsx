@@ -28,12 +28,7 @@ export default function ProtectedRoute({ children, requireAdmin = false }: Prote
     }, [usuario, isAdmin, requireAdmin, router]);
 
     // Mostra nada enquanto está carregando
-    if (isLoading) {
-        return null;
-    }
-
-    // Verifica as permissões após o carregamento
-    if (!usuario || (requireAdmin && !isAdmin)) {
+    if (isLoading || !usuario || (requireAdmin && !isAdmin)) {
         return null;
     }
 

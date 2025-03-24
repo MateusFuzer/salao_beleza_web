@@ -59,16 +59,6 @@ export class AgendamentoService {
         };
     }
 
-    private podeAlterarStatus(usuario: Usuario, novoStatus: string): boolean {
-        if (usuario.tipo === 'ADMIN' || usuario.tipo === 'FUNCIONARIO') return true;
-        
-        if (usuario.tipo === 'USUARIO') {
-            return novoStatus === 'Cancelado';
-        }
-
-        return false;
-    }
-
     alterarStatus(id: string, novoStatus: Agendamento['status'], observacao?: string): void {
         const usuarioLogado = this.usuarioRepository.getUsuarioLogado();
         if (!usuarioLogado) throw new Error('Usuário não está logado');
@@ -78,6 +68,16 @@ export class AgendamentoService {
         }
 
         this.repository.updateStatus(id, novoStatus, usuarioLogado, observacao);
+    }
+
+    private podeAlterarStatus(usuario: Usuario, novoStatus: Agendamento['status']): boolean {
+        if (usuario.tipo === 'ADMIN' || usuario.tipo === 'FUNCIONARIO') return true;
+        
+        if (usuario.tipo === 'USUARIO') {
+            return novoStatus === 'Cancelado';
+        }
+
+        return false;
     }
 
     private getAgendamentosDaSemana(usuarioId: string, data: string): Agendamento[] {
