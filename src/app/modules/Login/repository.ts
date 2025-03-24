@@ -4,7 +4,7 @@ export interface Usuario {
     usuario: string;
     email: string;
     senha: string;
-    tipo: 'ADMIN' | 'USUARIO';
+    tipo: 'ADMIN' | 'USUARIO' | 'FUNCIONARIO';
 }
 
 export class UsuarioRepository {

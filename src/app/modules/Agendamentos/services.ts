@@ -60,13 +60,13 @@ export class AgendamentoService {
     }
 
     private podeAlterarStatus(usuario: Usuario, novoStatus: string): boolean {
-        if (usuario.tipo === 'ADMIN') return true;
+        if (usuario.tipo === 'ADMIN' || usuario.tipo === 'FUNCIONARIO') return true;
         
         if (usuario.tipo === 'USUARIO') {
             return novoStatus === 'Cancelado';
         }
 
-        return ['Confirmado', 'Finalizado'].includes(novoStatus);
+        return false;
     }
 
     alterarStatus(id: string, novoStatus: Agendamento['status'], observacao?: string): void {

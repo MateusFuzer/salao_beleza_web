@@ -15,6 +15,13 @@ const usuariosPadrao: Usuario[] = [
         usuario: 'maria',
         senha: '123456',
         tipo: 'USUARIO'
+    },
+    {
+        id: '3',
+        nome: 'Funcionário',
+        usuario: 'func',
+        senha: '123456',
+        tipo: 'FUNCIONARIO'
     }
 ];
 

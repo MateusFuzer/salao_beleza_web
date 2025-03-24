@@ -6,7 +6,7 @@ import { useAuth } from "@/app/contexts/AuthContext";
 
 export default function Aside() {
     const pathname = usePathname();
-    const { isAdmin } = useAuth();
+    const { isAdmin, isFuncionario } = useAuth();
 
     const isSelected = (path: string) => {
         return pathname === path ? 'bg-white text-violet-400' : 'text-white hover:bg-violet-500';

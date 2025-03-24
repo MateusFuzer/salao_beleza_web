@@ -23,7 +23,7 @@ export default function Agendamentos() {
     const [agendamentoParaConfirmar, setAgendamentoParaConfirmar] = useState<Agendamento | null>(null);
     const [showFinalizeModal, setShowFinalizeModal] = useState(false);
     const [agendamentoParaFinalizar, setAgendamentoParaFinalizar] = useState<Agendamento | null>(null);
-    const { isAdmin } = useAuth();
+    const { isAdmin, isFuncionario } = useAuth();
     const usuarioRepository = new UsuarioRepository();
 
     const controller = new AgendamentoController();
@@ -171,6 +171,7 @@ export default function Agendamentos() {
                         onConfirmar={handleConfirmar}
                         onFinalizar={handleFinalizar}
                         isAdmin={isAdmin}
+                        isFuncionario={isFuncionario}
                     />
                 </div>
             </div>}

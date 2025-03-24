@@ -28,11 +28,12 @@ interface TabelaProps {
     onConfirmar?: (agendamento: Agendamento) => void;
     onFinalizar?: (agendamento: Agendamento) => void;
     isAdmin?: boolean;
+    isFuncionario?: boolean;
 }
 
 const ITENS_POR_PAGINA = 5;
 
-export const Tabela = ({ dados, colunas, onEditar, onCancelar, onConfirmar, onFinalizar, isAdmin }: TabelaProps) => {
+export const Tabela = ({ dados, colunas, onEditar, onCancelar, onConfirmar, onFinalizar, isAdmin, isFuncionario }: TabelaProps) => {
     const [paginaAtual, setPaginaAtual] = useState(1);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [agendamentoSelecionado, setAgendamentoSelecionado] = useState<Agendamento | null>(null);
@@ -114,7 +115,7 @@ export const Tabela = ({ dados, colunas, onEditar, onCancelar, onConfirmar, onFi
                                             )}
 
                                             {/* Botão de Confirmar */}
-                                            {onConfirmar && item.status === 'Solicitacao pendente' && isAdmin && (
+                                            {onConfirmar && item.status === 'Solicitacao pendente' && (isAdmin || isFuncionario) && (
                                                 <button 
                                                     className='bg-green-500 p-2 rounded-md text-white hover:bg-green-600'
                                                     onClick={() => onConfirmar(item)}
@@ -124,7 +125,7 @@ export const Tabela = ({ dados, colunas, onEditar, onCancelar, onConfirmar, onFi
                                             )}
 
                                             {/* Botão de Finalizar */}
-                                            {onFinalizar && item.status === 'Confirmado' && isAdmin && (
+                                            {onFinalizar && item.status === 'Confirmado' && (isAdmin || isFuncionario) && (
                                                 <button 
                                                     className='bg-blue-500 p-2 rounded-md text-white hover:bg-blue-600'
                                                     onClick={() => onFinalizar(item)}

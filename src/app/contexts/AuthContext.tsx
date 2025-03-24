@@ -7,6 +7,7 @@ import { AuthService } from '../modules/Login/services';
 interface AuthContextType {
     usuario: Usuario | null;
     isAdmin: boolean;
+    isFuncionario: boolean;
     login: (usuario: string, senha: string) => boolean;
     logout: () => void;
 }
@@ -16,6 +17,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [usuario, setUsuario] = useState<Usuario | null>(null);
     const [isAdmin, setIsAdmin] = useState(false);
+    const [isFuncionario, setIsFuncionario] = useState(false);
     const repository = new UsuarioRepository();
     const authService = new AuthService();
     const router = useRouter();
@@ -25,6 +27,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (usuarioLogado) {
             setUsuario(usuarioLogado);
             setIsAdmin(usuarioLogado.tipo === 'ADMIN');
+            setIsFuncionario(usuarioLogado.tipo === 'FUNCIONARIO');
         } else {
             router.push('/login');
         }
@@ -35,6 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         if (usuarioLogado) {
             setUsuario(usuarioLogado);
             setIsAdmin(usuarioLogado.tipo === 'ADMIN');
+            setIsFuncionario(usuarioLogado.tipo === 'FUNCIONARIO');
             window.dispatchEvent(new Event('authChange'));
             return true;
         }
@@ -45,12 +49,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         repository.logout();
         setUsuario(null);
         setIsAdmin(false);
+        setIsFuncionario(false);
         window.dispatchEvent(new Event('authChange'));
         router.push('/login');
     };
 
     return (
-        <AuthContext.Provider value={{ usuario, isAdmin, login, logout }}>
+        <AuthContext.Provider value={{ usuario, isAdmin, isFuncionario, login, logout }}>
             {children}
         </AuthContext.Provider>
     );
