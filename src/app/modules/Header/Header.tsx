@@ -40,7 +40,6 @@ export default function Header() {
               <span>{usuario.nome}</span>
             </button>
 
-            {/* Menu dropdown do usuário logado */}
             {showUserMenu && (
               <div className="absolute right-0 top-12 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                 <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-200">
@@ -67,7 +66,6 @@ export default function Header() {
               Entrar
             </button>
 
-            {/* Menu dropdown do usuário não logado */}
             {showUserMenu && (
               <div className="absolute right-0 top-12 w-48 bg-white rounded-md shadow-lg py-1 z-50">
                 <button

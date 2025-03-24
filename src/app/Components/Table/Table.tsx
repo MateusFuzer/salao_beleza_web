@@ -35,10 +35,7 @@ const ITENS_POR_PAGINA = 5;
 
 export const Tabela = ({ dados, colunas, onEditar, onCancelar, onConfirmar, onFinalizar, isAdmin, isFuncionario }: TabelaProps) => {
     const [paginaAtual, setPaginaAtual] = useState(1);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [agendamentoSelecionado, setAgendamentoSelecionado] = useState<Agendamento | null>(null);
 
-    // Cálculo para paginação
     const totalPaginas = Math.max(1, Math.ceil(dados.length / ITENS_POR_PAGINA));
     const indiceInicial = (paginaAtual - 1) * ITENS_POR_PAGINA;
     const indiceFinal = indiceInicial + ITENS_POR_PAGINA;
@@ -176,7 +173,6 @@ export const Tabela = ({ dados, colunas, onEditar, onCancelar, onConfirmar, onFi
                     </tbody>
                 </table>
 
-                {/* Componente de Paginação */}
                 <div className="flex items-center justify-between px-6 py-3 bg-gray-50">
                     <div className="flex items-center gap-2">
                         <span className="text-sm text-gray-700">

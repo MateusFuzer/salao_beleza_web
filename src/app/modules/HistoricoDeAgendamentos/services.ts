@@ -16,9 +16,7 @@ export class HistoricoService {
         if (!usuarioLogado) return [];
 
         const agendamentos = this.repository.getAll();
-        
-        // Se for admin, retorna todo o histórico
-        // Se for usuário comum, retorna apenas o seu histórico
+       
         const agendamentosFiltrados = usuarioLogado.tipo === 'ADMIN'
             ? agendamentos
             : agendamentos.filter(ag => ag.usuarioId === usuarioLogado.id);

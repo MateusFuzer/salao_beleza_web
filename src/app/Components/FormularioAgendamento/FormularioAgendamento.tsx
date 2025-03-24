@@ -20,7 +20,6 @@ const FormularioAgendamento = ({ agendamento }: FormularioAgendamentoProps) => {
     const controller = new AgendamentoController();
     const usuarioRepository = new UsuarioRepository();
 
-    // Verifica usuário logado ao carregar o componente
     useEffect(() => {
         const usuarioLogado = usuarioRepository.getUsuarioLogado();
         console.log('Usuário logado (useEffect):', usuarioLogado); // Debug
@@ -29,7 +28,6 @@ const FormularioAgendamento = ({ agendamento }: FormularioAgendamentoProps) => {
         }
     }, []);
 
-    // Preenche dados para edição
     useEffect(() => {
         if (agendamento) {
             setNome(agendamento.nome);
@@ -62,7 +60,6 @@ const FormularioAgendamento = ({ agendamento }: FormularioAgendamentoProps) => {
                 usuarioId: usuarioLogado.id
             }, agendamento?.id);
 
-            // Limpa o formulário
             setNome(usuarioLogado.nome);
             setTelefone('');
             setServico('Unha');
@@ -100,7 +97,6 @@ const FormularioAgendamento = ({ agendamento }: FormularioAgendamentoProps) => {
                 </h2>
                 <form onSubmit={handleSubmit}>
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {/* Nome */}
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-700" htmlFor="nome">
                                 Nome
@@ -115,7 +111,6 @@ const FormularioAgendamento = ({ agendamento }: FormularioAgendamentoProps) => {
                             />
                         </div>
 
-                        {/* Telefone */}
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-700" htmlFor="telefone">
                                 Telefone
@@ -130,7 +125,6 @@ const FormularioAgendamento = ({ agendamento }: FormularioAgendamentoProps) => {
                             />
                         </div>
 
-                        {/* Serviço */}
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-700" htmlFor="servico">
                                 Serviço
@@ -148,7 +142,6 @@ const FormularioAgendamento = ({ agendamento }: FormularioAgendamentoProps) => {
                             </select>
                         </div>
 
-                        {/* Valor */}
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-700" htmlFor="valor">
                                 Valor
@@ -163,7 +156,6 @@ const FormularioAgendamento = ({ agendamento }: FormularioAgendamentoProps) => {
                             />
                         </div>
 
-                        {/* Data */}
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-700" htmlFor="data">
                                 Data
@@ -178,7 +170,6 @@ const FormularioAgendamento = ({ agendamento }: FormularioAgendamentoProps) => {
                             />
                         </div>
 
-                        {/* Hora */}
                         <div className="mb-4">
                             <label className="block text-sm font-medium text-gray-700" htmlFor="hora">
                                 Hora
@@ -194,7 +185,6 @@ const FormularioAgendamento = ({ agendamento }: FormularioAgendamentoProps) => {
                         </div>
                     </div>
 
-                    {/* Botão Enviar */}
                     <div className="text-center mt-6">
                         <button
                             type="submit"

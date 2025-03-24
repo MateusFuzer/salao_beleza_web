@@ -29,7 +29,6 @@ export default function RootLayoutClient({
 }: Readonly<{
   children: React.ReactNode;
 }>) {
-  // Inicializa o usuário padrão
   useInitializeDefaultUser();
   const pathname = usePathname();
   const isLoginPage = pathname === '/login';

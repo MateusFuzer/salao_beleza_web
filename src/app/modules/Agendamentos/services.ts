@@ -32,8 +32,6 @@ export class AgendamentoService {
 
         const agendamentos = this.repository.getAll();
         
-        // Se for admin, retorna todos os agendamentos
-        // Se for usuário comum, retorna apenas os seus
         const agendamentosFiltrados = usuarioLogado.tipo === 'ADMIN' 
             ? agendamentos 
             : agendamentos.filter(ag => ag.usuarioId === usuarioLogado.id);

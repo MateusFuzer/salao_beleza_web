@@ -38,12 +38,10 @@ export class UsuarioRepository {
 
     getUsuarioLogado(): Usuario | null {
         const usuarioLogado = localStorage.getItem(this.LOGGED_USER_KEY);
-        console.log('getUsuarioLogado - raw data:', usuarioLogado); // Debug
         if (!usuarioLogado) return null;
         
         try {
             const usuario = JSON.parse(usuarioLogado);
-            console.log('getUsuarioLogado - parsed:', usuario); // Debug
             return usuario;
         } catch (error) {
             console.error('Erro ao parsear usuário:', error);

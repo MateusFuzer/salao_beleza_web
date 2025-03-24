@@ -38,7 +38,6 @@ export default function Agendamentos() {
     }, []);
 
     useEffect(() => {
-        // Atualiza quando houver mudança na autenticação
         const handleAuthChange = () => {
             loadAgendamentos();
         };
@@ -190,7 +189,6 @@ export default function Agendamentos() {
                 </div>
             </div>}
 
-            {/* FORMULÁRIO DE AGENDAMENTO (NOVO OU EDIÇÃO) */}
             {showFormularioDeAgendamento &&
             <div className="p-4 w-full bg-white rounded-md flex flex-1 flex-col">
                 <span className="text-gray-700 font-bold">
@@ -202,7 +200,6 @@ export default function Agendamentos() {
             </div>
             }
 
-            {/* Modal de Cancelamento */}
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                 {agendamentoParaCancelar && (
                     <>
@@ -235,7 +232,6 @@ export default function Agendamentos() {
                 )}
             </Modal>
 
-            {/* Modal de Confirmação */}
             <Modal isOpen={showConfirmModal} onClose={() => setShowConfirmModal(false)}>
                 {agendamentoParaConfirmar && (
                     <div className="p-4">
@@ -259,7 +255,6 @@ export default function Agendamentos() {
                 )}
             </Modal>
 
-            {/* Modal de Finalização */}
             <Modal isOpen={showFinalizeModal} onClose={() => setShowFinalizeModal(false)}>
                 {agendamentoParaFinalizar && (
                     <div className="p-4">
