@@ -31,4 +31,12 @@ export class AgendamentoController {
     calcularValorServico(servico: string): number {
         return this.service.calcularValorServico(servico);
     }
+
+    alterarStatus(id: string, novoStatus: Agendamento['status'], observacao?: string): void {
+        this.service.alterarStatus(id, novoStatus, observacao);
+    }
+
+    loadAgendamentos(): void {
+        return this.service.getAllAgendamentos();
+    }
 } 

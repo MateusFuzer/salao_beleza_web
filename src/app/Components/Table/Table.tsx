@@ -25,11 +25,14 @@ interface TabelaProps {
     colunas: Column[];
     onEditar?: (agendamento: Agendamento) => void;
     onCancelar?: (agendamento: Agendamento) => void;
+    onConfirmar?: (agendamento: Agendamento) => void;
+    onFinalizar?: (agendamento: Agendamento) => void;
+    isAdmin?: boolean;
 }
 
 const ITENS_POR_PAGINA = 5;
 
-export const Tabela = ({ dados, colunas, onEditar, onCancelar }: TabelaProps) => {
+export const Tabela = ({ dados, colunas, onEditar, onCancelar, onConfirmar, onFinalizar, isAdmin }: TabelaProps) => {
     const [paginaAtual, setPaginaAtual] = useState(1);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [agendamentoSelecionado, setAgendamentoSelecionado] = useState<Agendamento | null>(null);
@@ -50,12 +53,14 @@ export const Tabela = ({ dados, colunas, onEditar, onCancelar }: TabelaProps) =>
 
     const getcorStatus = (status: string) => {
         switch(status) {
-            case "Aberto":
-                return "text-green-400"
+            case "Solicitacao pendente":
+                return "text-yellow-500"
+            case "Confirmado":
+                return "text-green-500"
             case "Finalizado":
-                return "text-blue-400"
+                return "text-blue-500"
             case "Cancelado":
-                return "text-red-400"
+                return "text-red-500"
             default:
                 return "text-gray-500"
         }
@@ -72,7 +77,7 @@ export const Tabela = ({ dados, colunas, onEditar, onCancelar }: TabelaProps) =>
                                     {coluna.header}
                                 </th>
                             ))}
-                            {(onEditar || onCancelar) && (
+                            {(onEditar || onCancelar || onConfirmar || onFinalizar) && (
                                 <th className="px-6 py-3 text-left">Ações</th>
                             )}
                         </tr>
@@ -92,20 +97,43 @@ export const Tabela = ({ dados, colunas, onEditar, onCancelar }: TabelaProps) =>
                                                 : item[coluna.accessor]}
                                     </td>
                                 ))}
-                                {(onEditar || onCancelar) && (
+                                {(onEditar || onCancelar || onConfirmar || onFinalizar) && (
                                     <td className="px-6 py-4">
-                                        <div className='flex gap-3'>
-                                            {onEditar && (
+                                        <div className='flex gap-2'>
+                                            {/* Botão de Editar */}
+                                            {onEditar && item.status === 'Solicitacao pendente' && (
                                                 <button 
-                                                    className='bg-blue-500 p-2 rounded-md text-white'
+                                                    className='bg-blue-500 p-2 rounded-md text-white hover:bg-blue-600'
                                                     onClick={() => onEditar(item)}
                                                 >
                                                     Editar
                                                 </button>
                                             )}
-                                            {onCancelar && (
+
+                                            {/* Botão de Confirmar */}
+                                            {onConfirmar && item.status === 'Solicitacao pendente' && isAdmin && (
                                                 <button 
-                                                    className='bg-red-500 p-2 rounded-md text-white'
+                                                    className='bg-green-500 p-2 rounded-md text-white hover:bg-green-600'
+                                                    onClick={() => onConfirmar(item)}
+                                                >
+                                                    Confirmar
+                                                </button>
+                                            )}
+
+                                            {/* Botão de Finalizar */}
+                                            {onFinalizar && item.status === 'Confirmado' && isAdmin && (
+                                                <button 
+                                                    className='bg-blue-500 p-2 rounded-md text-white hover:bg-blue-600'
+                                                    onClick={() => onFinalizar(item)}
+                                                >
+                                                    Finalizar
+                                                </button>
+                                            )}
+
+                                            {/* Botão de Cancelar */}
+                                            {onCancelar && ['Solicitacao pendente', 'Confirmado'].includes(item.status) && (
+                                                <button 
+                                                    className='bg-red-500 p-2 rounded-md text-white hover:bg-red-600'
                                                     onClick={() => onCancelar(item)}
                                                 >
                                                     Cancelar

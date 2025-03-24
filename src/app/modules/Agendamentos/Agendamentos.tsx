@@ -19,6 +19,10 @@ export default function Agendamentos() {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [agendamentoParaCancelar, setAgendamentoParaCancelar] = useState<AgendamentoForm | null>(null);
     const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
+    const [showConfirmModal, setShowConfirmModal] = useState(false);
+    const [agendamentoParaConfirmar, setAgendamentoParaConfirmar] = useState<Agendamento | null>(null);
+    const [showFinalizeModal, setShowFinalizeModal] = useState(false);
+    const [agendamentoParaFinalizar, setAgendamentoParaFinalizar] = useState<Agendamento | null>(null);
     const { isAdmin } = useAuth();
     const usuarioRepository = new UsuarioRepository();
 
@@ -66,6 +70,50 @@ export default function Agendamentos() {
             setAgendamentos(agendamentosAtualizados);
             setIsModalOpen(false);
             setAgendamentoParaCancelar(null);
+        }
+    };
+
+    const handleConfirmar = (agendamento: Agendamento) => {
+        setAgendamentoParaConfirmar(agendamento);
+        setShowConfirmModal(true);
+    };
+
+    const handleFinalizar = (agendamento: Agendamento) => {
+        setAgendamentoParaFinalizar(agendamento);
+        setShowFinalizeModal(true);
+    };
+
+    const handleConfirmarConfirmacao = () => {
+        if (agendamentoParaConfirmar) {
+            try {
+                controller.alterarStatus(agendamentoParaConfirmar.id, 'Confirmado');
+                loadAgendamentos();
+                setShowConfirmModal(false);
+                setAgendamentoParaConfirmar(null);
+            } catch (error) {
+                if (error instanceof Error) {
+                    alert(error.message);
+                } else {
+                    alert('Erro ao confirmar agendamento');
+                }
+            }
+        }
+    };
+
+    const handleConfirmarFinalizacao = () => {
+        if (agendamentoParaFinalizar) {
+            try {
+                controller.alterarStatus(agendamentoParaFinalizar.id, 'Finalizado');
+                loadAgendamentos();
+                setShowFinalizeModal(false);
+                setAgendamentoParaFinalizar(null);
+            } catch (error) {
+                if (error instanceof Error) {
+                    alert(error.message);
+                } else {
+                    alert('Erro ao finalizar agendamento');
+                }
+            }
         }
     };
 
@@ -120,6 +168,9 @@ export default function Agendamentos() {
                         colunas={colunas} 
                         onEditar={handleEditarAgendamento}
                         onCancelar={handleCancelar}
+                        onConfirmar={handleConfirmar}
+                        onFinalizar={handleFinalizar}
+                        isAdmin={isAdmin}
                     />
                 </div>
             </div>}
@@ -166,6 +217,54 @@ export default function Agendamentos() {
                             </button>
                         </div>
                     </>
+                )}
+            </Modal>
+
+            {/* Modal de Confirmação */}
+            <Modal isOpen={showConfirmModal} onClose={() => setShowConfirmModal(false)}>
+                {agendamentoParaConfirmar && (
+                    <div className="p-4">
+                        <h3 className="text-lg font-semibold mb-4">Confirmar Agendamento</h3>
+                        <p>Deseja confirmar este agendamento?</p>
+                        <div className="mt-4 flex justify-end gap-2">
+                            <button
+                                onClick={() => setShowConfirmModal(false)}
+                                className="px-4 py-2 bg-gray-200 rounded-md"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                onClick={handleConfirmarConfirmacao}
+                                className="px-4 py-2 bg-green-500 text-white rounded-md"
+                            >
+                                Confirmar
+                            </button>
+                        </div>
+                    </div>
+                )}
+            </Modal>
+
+            {/* Modal de Finalização */}
+            <Modal isOpen={showFinalizeModal} onClose={() => setShowFinalizeModal(false)}>
+                {agendamentoParaFinalizar && (
+                    <div className="p-4">
+                        <h3 className="text-lg font-semibold mb-4">Finalizar Agendamento</h3>
+                        <p>Deseja finalizar este agendamento?</p>
+                        <div className="mt-4 flex justify-end gap-2">
+                            <button
+                                onClick={() => setShowFinalizeModal(false)}
+                                className="px-4 py-2 bg-gray-200 rounded-md"
+                            >
+                                Cancelar
+                            </button>
+                            <button
+                                onClick={handleConfirmarFinalizacao}
+                                className="px-4 py-2 bg-blue-500 text-white rounded-md"
+                            >
+                                Finalizar
+                            </button>
+                        </div>
+                    </div>
                 )}
             </Modal>
         </div>

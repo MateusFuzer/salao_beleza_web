@@ -99,14 +99,61 @@ export default function HistoricoDeAgendamentos() {
                                 <p><strong>Valor:</strong> R$ {agendamentoSelecionado.valor}</p>
                                 <p><strong>Status:</strong> {agendamentoSelecionado.status}</p>
                                 
-                                {agendamentoSelecionado.status === 'Cancelado' && agendamentoSelecionado.canceladoPor && (
-                                    <div className="mt-4 pt-4 border-t border-gray-200">
-                                        <h4 className="font-semibold text-gray-700 mb-2">Informações do Cancelamento</h4>
-                                        <p><strong>Cancelado por:</strong> {agendamentoSelecionado.canceladoPor.nome}</p>
-                                        <p><strong>Data:</strong> {agendamentoSelecionado.canceladoPor.data}</p>
-                                        <p><strong>Hora:</strong> {agendamentoSelecionado.canceladoPor.hora}</p>
+                                <div className="mt-4 space-y-4">
+                                    <div className="pt-4 border-t border-gray-200">
+                                        <h4 className="font-semibold text-gray-700 mb-2">Histórico do Agendamento</h4>
+                                        
+                                        <div className="space-y-3">
+                                            <div>
+                                                <p className="text-sm text-gray-600">Solicitado por</p>
+                                                <p><strong>{agendamentoSelecionado.solicitadoPor.nome}</strong></p>
+                                                <p className="text-sm text-gray-500">
+                                                    Em {agendamentoSelecionado.solicitadoPor.data} às {agendamentoSelecionado.solicitadoPor.hora}
+                                                </p>
+                                            </div>
+
+                                            {agendamentoSelecionado.confirmadoPor && (
+                                                <div>
+                                                    <p className="text-sm text-gray-600">Confirmado pela atendente</p>
+                                                    <p><strong>{agendamentoSelecionado.confirmadoPor.nome}</strong></p>
+                                                    <p className="text-sm text-gray-500">
+                                                        Em {agendamentoSelecionado.confirmadoPor.data} às {agendamentoSelecionado.confirmadoPor.hora}
+                                                    </p>
+                                                    {agendamentoSelecionado.confirmadoPor.observacao && (
+                                                        <p className="text-sm text-gray-600 mt-1">
+                                                            Obs: {agendamentoSelecionado.confirmadoPor.observacao}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            )}
+
+                                            {agendamentoSelecionado.finalizadoPor && (
+                                                <div>
+                                                    <p className="text-sm text-gray-600">Atendimento finalizado por</p>
+                                                    <p><strong>{agendamentoSelecionado.finalizadoPor.nome}</strong></p>
+                                                    <p className="text-sm text-gray-500">
+                                                        Em {agendamentoSelecionado.finalizadoPor.data} às {agendamentoSelecionado.finalizadoPor.hora}
+                                                    </p>
+                                                </div>
+                                            )}
+
+                                            {agendamentoSelecionado.canceladoPor && (
+                                                <div>
+                                                    <p className="text-sm text-gray-600">Cancelado por</p>
+                                                    <p><strong>{agendamentoSelecionado.canceladoPor.nome}</strong></p>
+                                                    <p className="text-sm text-gray-500">
+                                                        Em {agendamentoSelecionado.canceladoPor.data} às {agendamentoSelecionado.canceladoPor.hora}
+                                                    </p>
+                                                    {agendamentoSelecionado.canceladoPor.observacao && (
+                                                        <p className="text-sm text-gray-600 mt-1">
+                                                            Motivo: {agendamentoSelecionado.canceladoPor.observacao}
+                                                        </p>
+                                                    )}
+                                                </div>
+                                            )}
+                                        </div>
                                     </div>
-                                )}
+                                </div>
                             </div>
                             <div className="text-center mt-6">
                                 <button

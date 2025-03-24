@@ -1,3 +1,10 @@
+export interface StatusInfo {
+    nome: string;
+    data: string;
+    hora: string;
+    observacao?: string;
+}
+
 export interface Agendamento {
     id: string;
     nome: string;
@@ -6,13 +13,12 @@ export interface Agendamento {
     data: string;
     horario: string;
     valor: number;
-    status: string;
+    status: 'Solicitacao pendente' | 'Confirmado' | 'Finalizado' | 'Cancelado';
     usuarioId: string;
-    canceladoPor?: {
-        nome: string;
-        data: string;
-        hora: string;
-    };
+    solicitadoPor: StatusInfo;
+    confirmadoPor?: StatusInfo;
+    finalizadoPor?: StatusInfo;
+    canceladoPor?: StatusInfo;
 }
 
 export class AgendamentoRepository {
@@ -32,24 +38,43 @@ export class AgendamentoRepository {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(agendamentos));
     }
 
-    updateStatus(id: string, status: string, usuarioCancelamento?: Usuario): void {
+    updateStatus(
+        id: string, 
+        status: Agendamento['status'], 
+        usuario: Usuario,
+        observacao?: string
+    ): void {
         const agendamentos = this.getAll();
+        const dataAtual = new Date();
+        
+        const statusInfo: StatusInfo = {
+            nome: usuario.nome,
+            data: dataAtual.toISOString().split('T')[0],
+            hora: dataAtual.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }),
+            observacao
+        };
+
         const agendamentosAtualizados = agendamentos.map(ag => {
             if (ag.id === id) {
-                const canceladoPor = status === 'Cancelado' && usuarioCancelamento ? {
-                    nome: usuarioCancelamento.nome,
-                    data: new Date().toISOString().split('T')[0],
-                    hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-                } : undefined;
+                const atualizacao: Partial<Agendamento> = { status };
 
-                return { 
-                    ...ag, 
-                    status,
-                    canceladoPor 
-                };
+                switch (status) {
+                    case 'Confirmado':
+                        atualizacao.confirmadoPor = statusInfo;
+                        break;
+                    case 'Finalizado':
+                        atualizacao.finalizadoPor = statusInfo;
+                        break;
+                    case 'Cancelado':
+                        atualizacao.canceladoPor = statusInfo;
+                        break;
+                }
+
+                return { ...ag, ...atualizacao };
             }
             return ag;
         });
+
         this.save(agendamentosAtualizados);
     }
 } 
