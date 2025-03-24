@@ -1,19 +1,23 @@
 'use client'
 import { Tabela, Agendamento } from "@/app/Components/Table/Table";
 import Modal from "@/app/Components/Modal/Modal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Eye } from "lucide-react";
-
-interface AgendamentoHistorico extends Agendamento {
-    finalizadoPor: string;
-    dataFinalizacao: string;
-}
+import { HistoricoController } from "./controller";
 
 export default function HistoricoDeAgendamentos() {
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [agendamentoSelecionado, setAgendamentoSelecionado] = useState<AgendamentoHistorico | null>(null);
+    const [agendamentoSelecionado, setAgendamentoSelecionado] = useState<Agendamento | null>(null);
+    const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
 
-    const handleVisualizarDetalhes = (agendamento: AgendamentoHistorico) => {
+    const controller = new HistoricoController();
+
+    useEffect(() => {
+        const todosAgendamentos = controller.carregarTodosAgendamentos();
+        setAgendamentos(todosAgendamentos);
+    }, []);
+
+    const handleVisualizarDetalhes = (agendamento: Agendamento) => {
         setAgendamentoSelecionado(agendamento);
         setIsModalOpen(true);
     };
@@ -30,9 +34,9 @@ export default function HistoricoDeAgendamentos() {
         {
             header: 'Ação',
             accessor: 'id' as keyof Agendamento,
-            render: (item: Agendamento) => (
+            render: (agendamento: Agendamento) => (
                 <button 
-                    onClick={() => handleVisualizarDetalhes(item as AgendamentoHistorico)}
+                    onClick={() => handleVisualizarDetalhes(agendamento)}
                     className="bg-blue-500 p-2 rounded-md text-white flex items-center gap-2 hover:bg-blue-600"
                 >
                     <Eye size={16} />
@@ -42,30 +46,18 @@ export default function HistoricoDeAgendamentos() {
         }
     ];
 
-    const dados: AgendamentoHistorico[] = [
-        { 
-            id: "1", 
-            nome: 'Beatriz Valezio', 
-            status: 'Finalizado', 
-            servico: 'Cabelo', 
-            data: "2024-02-14",
-            horario: "08:10",
-            telefone: "14996145208", 
-            valor: 50,
-            finalizadoPor: "Maria Silva",
-            dataFinalizacao: "2024-02-14 08:45"
-        }
-    ];
-
     return (
-        <div className="h-full w-full bg-slate-200 rounded-md p-2 flex flex-col gap-4 ">
-            <span className="text-gray-700 font-bold">Histórico de Agendamentos</span>
-            
+        <div className="h-full w-full bg-slate-200 rounded-md p-2 flex flex-col gap-4">
             <div className="p-4 w-full bg-white rounded-md flex flex-1 flex-col">
-                <span className="text-gray-700 font-bold">Agendamentos realizados</span>
+                <div className="flex justify-between items-center mb-4">
+                    <span className="text-gray-700 font-bold">Histórico de Agendamentos</span>
+                    <span className="text-sm text-gray-500">
+                        {agendamentos.length} agendamento(s) no total
+                    </span>
+                </div>
                 <div>
                     <Tabela 
-                        dados={dados} 
+                        dados={agendamentos} 
                         colunas={colunas}
                     />
                 </div>
@@ -75,22 +67,19 @@ export default function HistoricoDeAgendamentos() {
             <Modal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
                 {agendamentoSelecionado && (
                     <>
-                        <h3 className="text-xl font-semibold text-center">Detalhes do Agendamento</h3>
-                        <div className="mt-4">
-                            <div className="bg-gray-50 p-4 rounded-md">
-                                <p className="mb-2"><strong>Cliente:</strong> {agendamentoSelecionado.nome}</p>
-                                <p className="mb-2"><strong>Serviço:</strong> {agendamentoSelecionado.servico}</p>
-                                <p className="mb-2"><strong>Data:</strong> {agendamentoSelecionado.data}</p>
-                                <p className="mb-2"><strong>Hora:</strong> {agendamentoSelecionado.horario}</p>
-                                <p className="mb-2"><strong>Valor:</strong> R${agendamentoSelecionado.valor},00</p>
-                                <div className="mt-4 pt-4 border-t border-gray-200">
-                                    <p className="text-green-600 mb-2">
-                                        <strong>Finalizado por:</strong> {agendamentoSelecionado.finalizadoPor}
-                                    </p>
-                                    <p className="text-green-600">
-                                        <strong>Data de finalização:</strong> {agendamentoSelecionado.dataFinalizacao}
-                                    </p>
-                                </div>
+                        <h3 className="text-xl font-semibold text-center mb-4">
+                            Detalhes do Agendamento
+                        </h3>
+                        <div className="space-y-4">
+                            <div className="bg-gray-50 p-4 rounded-lg">
+                                <p><strong>ID:</strong> {agendamentoSelecionado.id}</p>
+                                <p><strong>Nome:</strong> {agendamentoSelecionado.nome}</p>
+                                <p><strong>Serviço:</strong> {agendamentoSelecionado.servico}</p>
+                                <p><strong>Data:</strong> {agendamentoSelecionado.data}</p>
+                                <p><strong>Hora:</strong> {agendamentoSelecionado.horario}</p>
+                                <p><strong>Telefone:</strong> {agendamentoSelecionado.telefone}</p>
+                                <p><strong>Valor:</strong> R$ {agendamentoSelecionado.valor}</p>
+                                <p><strong>Status:</strong> {agendamentoSelecionado.status}</p>
                             </div>
                             <div className="text-center mt-6">
                                 <button
@@ -105,5 +94,5 @@ export default function HistoricoDeAgendamentos() {
                 )}
             </Modal>
         </div>
-    )
+    );
 } 

@@ -22,7 +22,12 @@ export class AgendamentoService {
     }
 
     getAllAgendamentos(): Agendamento[] {
-        return this.repository.getAll();
+        const agendamentos = this.repository.getAll();
+        return agendamentos.sort((a, b) => {
+            const dataA = new Date(`${a.data}T${a.horario}`);
+            const dataB = new Date(`${b.data}T${b.horario}`);
+            return dataB.getTime() - dataA.getTime();
+        });
     }
 
     cancelarAgendamento(id: string): void {
@@ -70,6 +75,12 @@ export class AgendamentoService {
 
     getAgendamentosEmAberto(): Agendamento[] {
         const agendamentos = this.repository.getAll();
-        return agendamentos.filter(agendamento => agendamento.status === 'Aberto');
+        return agendamentos
+            .filter(agendamento => agendamento.status === 'Aberto')
+            .sort((a, b) => {
+                const dataA = new Date(`${a.data}T${a.horario}`);
+                const dataB = new Date(`${b.data}T${b.horario}`);
+                return dataB.getTime() - dataA.getTime();
+            });
     }
 } 
