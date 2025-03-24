@@ -41,7 +41,9 @@ export default function Header() {
             alt="Logo do Salão"
           />
         </div>
-        <span className="text-violet-400 font-bold">Salão da Leila</span>
+        <span className="font-great-vibes text-3xl text-violet-400">
+          Salão da Leila
+        </span>
       </div>
 
       <div className="relative">
