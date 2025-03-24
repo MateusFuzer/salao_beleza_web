@@ -16,6 +16,8 @@ interface FormData {
 export default function Configuracoes() {
     const [usuarios, setUsuarios] = useState<Usuario[]>([]);
     const [showModal, setShowModal] = useState(false);
+    const [showDeleteModal, setShowDeleteModal] = useState(false);
+    const [usuarioParaDeletar, setUsuarioParaDeletar] = useState<Usuario | null>(null);
     const [usuarioEmEdicao, setUsuarioEmEdicao] = useState<Usuario | null>(null);
     const [formData, setFormData] = useState<FormData>({
         nome: '',
@@ -65,11 +67,17 @@ export default function Configuracoes() {
         setShowModal(true);
     };
 
-    const handleDeletar = (usuario: Usuario) => {
-        if (window.confirm('Tem certeza que deseja excluir este usuário?')) {
+    const handleExcluir = (usuario: Usuario) => {
+        setUsuarioParaDeletar(usuario);
+        setShowDeleteModal(true);
+    };
+
+    const confirmarExclusao = () => {
+        if (usuarioParaDeletar) {
             try {
-                controller.deletarUsuario(usuario.id);
+                controller.deletarUsuario(usuarioParaDeletar.id);
                 loadUsuarios();
+                setShowDeleteModal(false);
             } catch (error) {
                 alert(error instanceof Error ? error.message : 'Erro ao deletar usuário');
             }
@@ -126,15 +134,15 @@ export default function Configuracoes() {
                                         <div className="flex gap-2">
                                             <button
                                                 onClick={() => handleEditar(usuario)}
-                                                className="text-blue-600 hover:text-blue-800"
+                                                className="text-indigo-600 hover:text-indigo-900 mr-4 cursor-pointer"
                                             >
-                                                <Pencil size={18} />
+                                                <Pencil size={20} />
                                             </button>
                                             <button
-                                                onClick={() => handleDeletar(usuario)}
-                                                className="text-red-600 hover:text-red-800"
+                                                onClick={() => handleExcluir(usuario)}
+                                                className="text-red-600 hover:text-red-900 cursor-pointer"
                                             >
-                                                <Trash2 size={18} />
+                                                <Trash2 size={20} />
                                             </button>
                                         </div>
                                     </td>
@@ -219,6 +227,29 @@ export default function Configuracoes() {
                             </button>
                         </div>
                     </form>
+                </div>
+            </Modal>
+
+            <Modal isOpen={showDeleteModal} onClose={() => setShowDeleteModal(false)}>
+                <div className="p-6">
+                    <h3 className="text-lg font-semibold mb-4">Confirmar Exclusão</h3>
+                    <p className="text-gray-600 mb-6">
+                        Tem certeza que deseja excluir o usuário {usuarioParaDeletar?.nome}?
+                    </p>
+                    <div className="flex justify-end gap-2">
+                        <button
+                            onClick={() => setShowDeleteModal(false)}
+                            className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200 cursor-pointer"
+                        >
+                            Cancelar
+                        </button>
+                        <button
+                            onClick={confirmarExclusao}
+                            className="px-4 py-2 text-sm font-medium text-white bg-red-600 rounded-md hover:bg-red-700 cursor-pointer"
+                        >
+                            Confirmar
+                        </button>
+                    </div>
                 </div>
             </Modal>
         </div>
