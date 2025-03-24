@@ -2,28 +2,39 @@
 import FormularioAgendamento from "@/app/Components/FormularioAgendamento/FormularioAgendamento";
 import { Tabela, Agendamento } from "@/app/Components/Table/Table";
 import { ArrowLeft, Plus } from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Modal from "@/app/Components/Modal/Modal";
+import { AgendamentoController } from "./controller";
+import { AgendamentoComCliente } from './services';
 
 interface AgendamentoForm extends Agendamento {
     cliente: string;
 }
 
-export default function Agendamentos(){
-    const [ showFormularioDeAgendamento, setShowFormularioDeAgendamento ] = useState(false)
-    const [ agendamentoParaEditar, setAgendamentoParaEditar ] = useState<AgendamentoForm | null>(null)
-    const [ isModalOpen, setIsModalOpen ] = useState(false);
-    const [ agendamentoParaCancelar, setAgendamentoParaCancelar ] = useState<AgendamentoForm | null>(null);
+export default function Agendamentos() {
+    const [showFormularioDeAgendamento, setShowFormularioDeAgendamento] = useState(false);
+    const [agendamentoParaEditar, setAgendamentoParaEditar] = useState<AgendamentoForm | null>(null);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [agendamentoParaCancelar, setAgendamentoParaCancelar] = useState<AgendamentoForm | null>(null);
+    const [agendamentos, setAgendamentos] = useState<Agendamento[]>([]);
+
+    const controller = new AgendamentoController();
+
+    useEffect(() => {
+        const agendamentosCarregados = controller.carregarAgendamentosEmAberto();
+        setAgendamentos(agendamentosCarregados);
+    }, []);
 
     const handleEditarAgendamento = (agendamento: Agendamento) => {
-        setAgendamentoParaEditar({...agendamento, cliente: agendamento.nome})
-        setShowFormularioDeAgendamento(true)
-    }
+        const agendamentoEditavel = controller.prepararAgendamentoParaEdicao(agendamento);
+        setAgendamentoParaEditar(agendamentoEditavel);
+        setShowFormularioDeAgendamento(true);
+    };
 
     const handleVoltarParaLista = () => {
-        setShowFormularioDeAgendamento(false)
-        setAgendamentoParaEditar(null)
-    }
+        setShowFormularioDeAgendamento(false);
+        setAgendamentoParaEditar(null);
+    };
 
     const handleCancelar = (agendamento: Agendamento) => {
         setAgendamentoParaCancelar({...agendamento, cliente: agendamento.nome});
@@ -32,9 +43,12 @@ export default function Agendamentos(){
 
     const handleConfirmarCancelamento = () => {
         if (agendamentoParaCancelar) {
-            console.log(`Agendamento cancelado: ${agendamentoParaCancelar.id}`);
+            controller.handleCancelarAgendamento(agendamentoParaCancelar.id);
+            const agendamentosAtualizados = controller.carregarAgendamentosEmAberto();
+            setAgendamentos(agendamentosAtualizados);
+            setIsModalOpen(false);
+            setAgendamentoParaCancelar(null);
         }
-        setIsModalOpen(false);
     };
 
     const colunas = [
@@ -46,19 +60,6 @@ export default function Agendamentos(){
         { header: 'Hora', accessor: 'horario' as keyof Agendamento },
         { header: 'Telefone', accessor: 'telefone' as keyof Agendamento },
         { header: 'Valor', accessor: 'valor' as keyof Agendamento }
-    ];
-
-    const dados: Agendamento[] = [
-        { 
-            id: "1", 
-            nome: 'Beatriz Valezio', 
-            status: 'Aberto', 
-            servico: 'Cabelo', 
-            data: "2024-02-14",
-            horario: "08:10",
-            telefone: "14996145208", 
-            valor: 50
-        }
     ];
 
     return (
@@ -87,10 +88,15 @@ export default function Agendamentos(){
             {/* AGENDAMENTOS QUE ESTAO EM ABERTO */}
             {!showFormularioDeAgendamento && 
             <div className="p-4 w-full bg-white rounded-md flex flex-1 flex-col">
-                <span className="text-gray-700 font-bold">Agendamentos em aberto</span>
+                <div className="flex justify-between items-center mb-4">
+                    <span className="text-gray-700 font-bold">Agendamentos em aberto</span>
+                    <span className="text-sm text-gray-500">
+                        {agendamentos.length} agendamento(s) em aberto
+                    </span>
+                </div>
                 <div>
                     <Tabela 
-                        dados={dados} 
+                        dados={agendamentos} 
                         colunas={colunas} 
                         onEditar={handleEditarAgendamento}
                         onCancelar={handleCancelar}

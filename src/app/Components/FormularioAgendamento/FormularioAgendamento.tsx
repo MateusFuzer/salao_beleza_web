@@ -1,16 +1,7 @@
 'use client'
 import { useState, useEffect } from "react";
-
-interface Agendamento {
-    id: string;
-    nome: string;
-    telefone: string;
-    servico: string;
-    data: string;
-    horario: string;
-    valor: number;
-    status: string;
-}
+import { AgendamentoController } from "@/app/modules/Agendamentos/controller";
+import { Agendamento } from "@/app/modules/Agendamentos/repository";
 
 interface FormularioAgendamentoProps {
     agendamento: Agendamento | null;
@@ -24,7 +15,8 @@ const FormularioAgendamento = ({ agendamento }: FormularioAgendamentoProps) => {
     const [hora, setHora] = useState('');
     const [valor, setValor] = useState(20);
 
-    // Preenche o formulário quando receber um agendamento para edição
+    const controller = new AgendamentoController();
+
     useEffect(() => {
         if (agendamento) {
             setNome(agendamento.nome);
@@ -36,40 +28,39 @@ const FormularioAgendamento = ({ agendamento }: FormularioAgendamentoProps) => {
         }
     }, [agendamento]);
 
-    const handleSubmit = (event: React.FormEvent) => {
-        event.preventDefault();
-        
-        const dadosAgendamento = {
-            id: agendamento?.id || '', // Se for edição, mantém o ID, se for novo será gerado
-            nome,
-            telefone,
-            servico,
-            data,
-            horario: hora,
-            valor,
-            status: agendamento?.status || 'Aberto'
-        };
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
 
-        console.log('Dados do agendamento:', dadosAgendamento);
-        // Aqui você pode adicionar a lógica para salvar/atualizar o agendamento
+        try {
+            controller.handleSubmit({
+                nome,
+                telefone,
+                servico,
+                data,
+                horario: hora,
+                valor: Number(valor)
+            }, agendamento?.id);
+
+            // Limpa o formulário
+            setNome('');
+            setTelefone('');
+            setServico('Unha');
+            setData('');
+            setHora('');
+            setValor(20);
+
+            alert('Agendamento salvo com sucesso!');
+            window.location.reload();
+        } catch (error) {
+            console.error('Erro:', error);
+            alert('Erro ao salvar agendamento. Tente novamente.');
+        }
     };
 
     const handleServicoChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const selectedServico = e.target.value;
         setServico(selectedServico);
-
-        // Atualiza o valor com base no serviço
-        switch (selectedServico) {
-            case 'Unha':
-                setValor(20);
-                break;
-            case 'Maquiagem':
-                setValor(30);
-                break;
-            case 'Cabelo':
-                setValor(50);
-                break;
-        }
+        setValor(controller.calcularValorServico(selectedServico));
     };
 
     return (
