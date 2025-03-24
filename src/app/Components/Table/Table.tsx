@@ -70,6 +70,15 @@ export const Tabela = ({ dados, colunas, onEditar, onCancelar, onConfirmar, onFi
         }
     };
 
+    const podeEditarOuCancelar = (data: string): boolean => {
+        if (isAdmin || isFuncionario) return true;
+        
+        const dataAgendamento = new Date(data);
+        const hoje = new Date();
+        const diffEmDias = Math.ceil((dataAgendamento.getTime() - hoje.getTime()) / (1000 * 60 * 60 * 24));
+        return diffEmDias >= 2;
+    };
+
     return (
         <div className="container mx-auto p-8">
             <div className="bg-white shadow-lg rounded-lg overflow-hidden">
@@ -104,17 +113,25 @@ export const Tabela = ({ dados, colunas, onEditar, onCancelar, onConfirmar, onFi
                                 {(onEditar || onCancelar || onConfirmar || onFinalizar) && (
                                     <td className="px-6 py-4">
                                         <div className='flex gap-2'>
-                                            {/* Botão de Editar */}
-                                            {onEditar && item.status === 'Solicitacao pendente' && (
-                                                <button 
-                                                    className='bg-blue-500 p-2 rounded-md text-white hover:bg-blue-600'
-                                                    onClick={() => onEditar(item)}
-                                                >
-                                                    Editar
-                                                </button>
+                                            {onEditar && ['Solicitacao pendente', 'Confirmado'].includes(item.status) && (
+                                                <div className="relative group inline-block">
+                                                    <button 
+                                                        className={`bg-blue-500 p-2 rounded-md text-white hover:bg-blue-600 flex items-center gap-2 ${
+                                                            !podeEditarOuCancelar(item.data) && !isAdmin && !isFuncionario ? 'opacity-50 cursor-not-allowed' : ''
+                                                        }`}
+                                                        onClick={() => podeEditarOuCancelar(item.data) ? onEditar(item) : null}
+                                                        disabled={!podeEditarOuCancelar(item.data) && !isAdmin && !isFuncionario}
+                                                    >
+                                                        Editar
+                                                    </button>
+                                                    {!podeEditarOuCancelar(item.data) && !isAdmin && !isFuncionario && (
+                                                        <div className="absolute right-full top-0 mr-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity w-80 z-[9999]">
+                                                            Não é possível editar agendamentos com menos de 2 dias de antecedência. Entre em contato com a empresa para realizar alterações.
+                                                        </div>
+                                                    )}
+                                                </div>
                                             )}
 
-                                            {/* Botão de Confirmar */}
                                             {onConfirmar && item.status === 'Solicitacao pendente' && (isAdmin || isFuncionario) && (
                                                 <button 
                                                     className='bg-green-500 p-2 rounded-md text-white hover:bg-green-600'
@@ -124,7 +141,6 @@ export const Tabela = ({ dados, colunas, onEditar, onCancelar, onConfirmar, onFi
                                                 </button>
                                             )}
 
-                                            {/* Botão de Finalizar */}
                                             {onFinalizar && item.status === 'Confirmado' && (isAdmin || isFuncionario) && (
                                                 <button 
                                                     className='bg-blue-500 p-2 rounded-md text-white hover:bg-blue-600'
@@ -134,14 +150,23 @@ export const Tabela = ({ dados, colunas, onEditar, onCancelar, onConfirmar, onFi
                                                 </button>
                                             )}
 
-                                            {/* Botão de Cancelar */}
                                             {onCancelar && ['Solicitacao pendente', 'Confirmado'].includes(item.status) && (
-                                                <button 
-                                                    className='bg-red-500 p-2 rounded-md text-white hover:bg-red-600'
-                                                    onClick={() => onCancelar(item)}
-                                                >
-                                                    Cancelar
-                                                </button>
+                                                <div className="relative group inline-block">
+                                                    <button 
+                                                        className={`bg-red-500 p-2 rounded-md text-white hover:bg-red-600 ${
+                                                            !podeEditarOuCancelar(item.data) && !isAdmin && !isFuncionario ? 'opacity-50 cursor-not-allowed' : ''
+                                                        }`}
+                                                        onClick={() => podeEditarOuCancelar(item.data) ? onCancelar(item) : null}
+                                                        disabled={!podeEditarOuCancelar(item.data) && !isAdmin && !isFuncionario}
+                                                    >
+                                                        Cancelar
+                                                    </button>
+                                                    {!podeEditarOuCancelar(item.data) && !isAdmin && !isFuncionario && (
+                                                        <div className="absolute right-full top-0 mr-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity w-80 z-[9999]">
+                                                            Não é possível cancelar agendamentos com menos de 2 dias de antecedência. Entre em contato com a empresa para realizar alterações.
+                                                        </div>
+                                                    )}
+                                                </div>
                                             )}
                                         </div>
                                     </td>
