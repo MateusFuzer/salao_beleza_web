@@ -18,7 +18,7 @@ export default function Aside() {
             <div className="flex flex-col gap-2">
                 <Link href="/agendamentos">
                     <button
-                        className={`w-full p-2 rounded-md flex items-center gap-2 transition-colors ${isSelected('/agendamentos')}`}
+                        className={`cursor-pointer w-full p-2 rounded-md flex items-center gap-2 transition-colors ${isSelected('/agendamentos')}`}
                     >
                         <Calendar size={20} />
                         Agendamentos
@@ -26,7 +26,7 @@ export default function Aside() {
                 </Link>
                 <Link href="/historico">
                     <button
-                        className={`w-full p-2 rounded-md flex items-center gap-2 transition-colors ${isSelected('/historico')}`}
+                        className={` cursor-pointer w-full p-2 rounded-md flex items-center gap-2 transition-colors ${isSelected('/historico')}`}
                     >
                         <Home size={20} />
                         Histórico de agendamentos
@@ -36,7 +36,7 @@ export default function Aside() {
                     <>
                         <Link href="/configuracoes">
                             <button
-                                className={`w-full p-2 rounded-md flex items-center gap-2 transition-colors ${isSelected('/configuracoes')}`}
+                                className={`cursor-pointer w-full p-2 rounded-md flex items-center gap-2 transition-colors ${isSelected('/configuracoes')}`}
                             >
                                 <Settings size={20} />
                                 Configurações
@@ -44,7 +44,7 @@ export default function Aside() {
                         </Link>
                         <Link href="/relatorio-semanal">
                             <button
-                                className={`w-full p-2 rounded-md flex items-center gap-2 transition-colors ${isSelected('/relatorio-semanal')}`}
+                                className={`cursor-pointer w-full p-2 rounded-md flex items-center gap-2 transition-colors ${isSelected('/relatorio-semanal')}`}
                             >
                                 <BarChart size={20} />
                                 Relatório Semanal

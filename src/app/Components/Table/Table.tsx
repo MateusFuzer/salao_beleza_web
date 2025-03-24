@@ -116,7 +116,7 @@ export const Tabela = ({ dados, colunas, onEditar, onCancelar, onConfirmar, onFi
                                             {onEditar && ['Solicitacao pendente', 'Confirmado'].includes(item.status) && (
                                                 <div className="relative group inline-block">
                                                     <button 
-                                                        className={`bg-blue-500 p-2 rounded-md text-white hover:bg-blue-600 flex items-center gap-2 ${
+                                                        className={`bg-blue-500 p-2 rounded-md text-white hover:bg-blue-600 flex items-center gap-2 cursor-pointer ${
                                                             !podeEditarOuCancelar(item.data) && !isAdmin && !isFuncionario ? 'opacity-50 cursor-not-allowed' : ''
                                                         }`}
                                                         onClick={() => podeEditarOuCancelar(item.data) ? onEditar(item) : null}
@@ -134,7 +134,7 @@ export const Tabela = ({ dados, colunas, onEditar, onCancelar, onConfirmar, onFi
 
                                             {onConfirmar && item.status === 'Solicitacao pendente' && (isAdmin || isFuncionario) && (
                                                 <button 
-                                                    className='bg-green-500 p-2 rounded-md text-white hover:bg-green-600'
+                                                    className='bg-green-500 p-2 rounded-md text-white hover:bg-green-600 cursor-pointer'
                                                     onClick={() => onConfirmar(item)}
                                                 >
                                                     Confirmar
@@ -143,7 +143,7 @@ export const Tabela = ({ dados, colunas, onEditar, onCancelar, onConfirmar, onFi
 
                                             {onFinalizar && item.status === 'Confirmado' && (isAdmin || isFuncionario) && (
                                                 <button 
-                                                    className='bg-blue-500 p-2 rounded-md text-white hover:bg-blue-600'
+                                                    className='bg-blue-500 p-2 rounded-md text-white hover:bg-blue-600 cursor-pointer'
                                                     onClick={() => onFinalizar(item)}
                                                 >
                                                     Finalizar
@@ -153,7 +153,7 @@ export const Tabela = ({ dados, colunas, onEditar, onCancelar, onConfirmar, onFi
                                             {onCancelar && ['Solicitacao pendente', 'Confirmado'].includes(item.status) && (
                                                 <div className="relative group inline-block">
                                                     <button 
-                                                        className={`bg-red-500 p-2 rounded-md text-white hover:bg-red-600 ${
+                                                        className={`bg-red-500 p-2 rounded-md text-white hover:bg-red-600 cursor-pointer ${
                                                             !podeEditarOuCancelar(item.data) && !isAdmin && !isFuncionario ? 'opacity-50 cursor-not-allowed' : ''
                                                         }`}
                                                         onClick={() => podeEditarOuCancelar(item.data) ? onCancelar(item) : null}

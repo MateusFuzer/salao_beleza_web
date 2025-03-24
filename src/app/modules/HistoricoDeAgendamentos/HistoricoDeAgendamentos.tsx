@@ -65,7 +65,7 @@ export default function HistoricoDeAgendamentos() {
                 return (
                     <button 
                         onClick={() => handleVisualizarDetalhes(agendamentoCompleto)}
-                        className="bg-blue-500 p-2 rounded-md text-white flex items-center gap-2 hover:bg-blue-600"
+                        className="cursor-pointer bg-blue-500 p-2 rounded-md text-white flex items-center gap-2 hover:bg-blue-600"
                     >
                         <Eye size={16} />
                         Visualizar
