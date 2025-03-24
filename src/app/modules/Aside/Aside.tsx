@@ -1,5 +1,5 @@
 'use client'
-import { Calendar, Home, Settings } from "lucide-react";
+import { Calendar, Home, Settings, BarChart } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
 import { useAuth } from "@/app/contexts/AuthContext";
@@ -33,14 +33,24 @@ export default function Aside() {
                     </button>
                 </Link>
                 {isAdmin && (
-                    <Link href="/configuracoes">
-                        <button
-                            className={`w-full p-2 rounded-md flex items-center gap-2 transition-colors ${isSelected('/configuracoes')}`}
-                        >
-                            <Settings size={20} />
-                            Configurações
-                        </button>
-                    </Link>
+                    <>
+                        <Link href="/configuracoes">
+                            <button
+                                className={`w-full p-2 rounded-md flex items-center gap-2 transition-colors ${isSelected('/configuracoes')}`}
+                            >
+                                <Settings size={20} />
+                                Configurações
+                            </button>
+                        </Link>
+                        <Link href="/relatorio-semanal">
+                            <button
+                                className={`w-full p-2 rounded-md flex items-center gap-2 transition-colors ${isSelected('/relatorio-semanal')}`}
+                            >
+                                <BarChart size={20} />
+                                Relatório Semanal
+                            </button>
+                        </Link>
+                    </>
                 )}
             </div>
         </aside>
