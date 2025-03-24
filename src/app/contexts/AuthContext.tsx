@@ -1,6 +1,7 @@
 'use client'
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { Usuario, UsuarioRepository } from '../modules/Login/repository';
+import { useRouter } from 'next/navigation';
 
 interface AuthContextType {
     usuario: Usuario | null;
@@ -15,6 +16,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const [usuario, setUsuario] = useState<Usuario | null>(null);
     const [isAdmin, setIsAdmin] = useState(false);
     const repository = new UsuarioRepository();
+    const router = useRouter();
 
     useEffect(() => {
         const usuarioLogado = repository.getUsuarioLogado();
@@ -36,6 +38,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setUsuario(null);
         setIsAdmin(false);
         window.dispatchEvent(new Event('authChange'));
+        router.push('/agendamentos');
     };
 
     return (

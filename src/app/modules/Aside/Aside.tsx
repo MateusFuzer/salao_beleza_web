@@ -2,9 +2,11 @@
 import { Calendar, Home, Settings } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from 'next/navigation';
+import { useAuth } from "@/app/contexts/AuthContext";
 
 export default function Aside() {
     const pathname = usePathname();
+    const { isAdmin } = useAuth();
 
     const isSelected = (path: string) => {
         return pathname === path ? 'bg-white text-violet-400' : 'text-white hover:bg-violet-500';
@@ -30,6 +32,16 @@ export default function Aside() {
                         Histórico de agendamentos
                     </button>
                 </Link>
+                {isAdmin && (
+                    <Link href="/configuracoes">
+                        <button
+                            className={`w-full p-2 rounded-md flex items-center gap-2 transition-colors ${isSelected('/configuracoes')}`}
+                        >
+                            <Settings size={20} />
+                            Configurações
+                        </button>
+                    </Link>
+                )}
             </div>
         </aside>
     );
