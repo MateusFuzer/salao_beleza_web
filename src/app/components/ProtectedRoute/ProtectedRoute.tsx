@@ -14,7 +14,6 @@ export default function ProtectedRoute({ children, requireAdmin = false }: Prote
     const [isLoading, setIsLoading] = useState(true);
 
     useEffect(() => {
-        // Aguarda um pequeno delay para garantir que o estado do usuário foi carregado
         const timer = setTimeout(() => {
             if (!usuario) {
                 router.push('/login');
@@ -27,7 +26,6 @@ export default function ProtectedRoute({ children, requireAdmin = false }: Prote
         return () => clearTimeout(timer);
     }, [usuario, isAdmin, requireAdmin, router]);
 
-    // Mostra nada enquanto está carregando
     if (isLoading || !usuario || (requireAdmin && !isAdmin)) {
         return null;
     }

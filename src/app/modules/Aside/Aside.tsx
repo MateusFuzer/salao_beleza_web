@@ -13,46 +13,49 @@ export default function Aside() {
     };
 
     return (
-        <aside className="h-full w-[300px] bg-violet-400 rounded-md p-4 flex flex-col gap-4">
-            <span className="text-white font-bold">Menu</span>
-            <div className="flex flex-col gap-2">
-                <Link href="/agendamentos">
+        <aside className="w-full md:h-full bg-violet-400 rounded-md p-2 md:p-4 flex flex-col gap-2 md:gap-4">
+            <span className="text-white font-bold hidden md:block">Menu</span>
+            <nav className="flex md:flex-col gap-2 overflow-x-auto md:overflow-x-visible">
+                <Link href="/agendamentos" className="min-w-fit">
                     <button
-                        className={`cursor-pointer w-full p-2 rounded-md flex items-center gap-2 transition-colors ${isSelected('/agendamentos')}`}
+                        className={`w-full p-2 rounded-md flex items-center gap-2 transition-colors cursor-pointer ${isSelected('/agendamentos')}`}
                     >
                         <Calendar size={20} />
-                        Agendamentos
+                        <span className="hidden md:inline">Agendamentos</span>
                     </button>
                 </Link>
-                <Link href="/historico">
+                
+                <Link href="/historico" className="min-w-fit">
                     <button
-                        className={` cursor-pointer w-full p-2 rounded-md flex items-center gap-2 transition-colors ${isSelected('/historico')}`}
+                        className={`w-full p-2 rounded-md flex items-center gap-2 transition-colors cursor-pointer ${isSelected('/historico')}`}
                     >
                         <Home size={20} />
-                        Histórico de agendamentos
+                        <span className="hidden md:inline">Histórico</span>
                     </button>
                 </Link>
+
                 {isAdmin && (
                     <>
-                        <Link href="/configuracoes">
+                        <Link href="/configuracoes" className="min-w-fit">
                             <button
-                                className={`cursor-pointer w-full p-2 rounded-md flex items-center gap-2 transition-colors ${isSelected('/configuracoes')}`}
+                                className={`w-full p-2 rounded-md flex items-center gap-2 transition-colors cursor-pointer ${isSelected('/configuracoes')}`}
                             >
                                 <Settings size={20} />
-                                Configurações
+                                <span className="hidden md:inline">Configurações</span>
                             </button>
                         </Link>
-                        <Link href="/relatorio-semanal">
+                        
+                        <Link href="/relatorio-semanal" className="min-w-fit">
                             <button
-                                className={`cursor-pointer w-full p-2 rounded-md flex items-center gap-2 transition-colors ${isSelected('/relatorio-semanal')}`}
+                                className={`w-full p-2 rounded-md flex items-center gap-2 transition-colors cursor-pointer ${isSelected('/relatorio-semanal')}`}
                             >
                                 <BarChart size={20} />
-                                Relatório Semanal
+                                <span className="hidden md:inline">Relatório</span>
                             </button>
                         </Link>
                     </>
                 )}
-            </div>
+            </nav>
         </aside>
     );
 }

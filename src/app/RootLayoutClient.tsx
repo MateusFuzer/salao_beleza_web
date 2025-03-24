@@ -40,15 +40,15 @@ export default function RootLayoutClient({
           {isLoginPage ? (
             children
           ) : (
-            <div className="h-full w-full">
-              <header className="h-[5%] w-full">
+            <div className="min-h-screen w-full">
+              <header className="h-[60px] w-full">
                 <Header/>
               </header>
-              <div className="h-[95%] flex w-full">
-                <div className="w-[15%] h-full">
+              <div className="flex flex-col md:flex-row w-full min-h-[calc(100vh-60px)]">
+                <div className="w-full md:w-[250px] md:min-h-full">
                   <Aside />
                 </div>
-                <main className="flex flex-1 p-4">{children}</main>
+                <main className="flex-1 p-2 md:p-4 overflow-x-auto">{children}</main>
               </div>
             </div>
           )}

@@ -77,110 +77,110 @@ export const Tabela = ({ dados, colunas, onEditar, onCancelar, onConfirmar, onFi
     };
 
     return (
-        <div className="container mx-auto p-8">
-            <div className="bg-white shadow-lg rounded-lg overflow-hidden">
-                <table className="min-w-full table-auto">
-                    <thead className="bg-violet-400 text-white">
-                        <tr>
-                            {colunas.map((coluna, index) => (
-                                <th key={index} className="px-6 py-3 text-left">
-                                    {coluna.header}
-                                </th>
-                            ))}
-                            {(onEditar || onCancelar || onConfirmar || onFinalizar) && (
-                                <th className="px-6 py-3 text-left">Ações</th>
-                            )}
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {dadosPaginados.map((item) => (
-                            <tr key={item.id} className="hover:bg-gray-50">
+        <div className="w-full overflow-x-auto">
+            <div className="min-w-full bg-white shadow-lg rounded-lg overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="min-w-full table-auto">
+                        <thead className="bg-violet-400 text-white">
+                            <tr>
                                 {colunas.map((coluna, index) => (
-                                    <td key={index} className={`px-6 py-4 ${
-                                        coluna.accessor === 'status' ? getcorStatus(item.status) : 
-                                        coluna.accessor === 'valor' ? 'text-green-400' : ''
-                                    }`}>
-                                        {coluna.render 
-                                            ? coluna.render(item)
-                                            : coluna.accessor === 'valor' 
-                                                ? `R$${item[coluna.accessor]},00`
-                                                : item[coluna.accessor]}
-                                    </td>
+                                    <th key={index} className="px-6 py-3 text-left">
+                                        {coluna.header}
+                                    </th>
                                 ))}
                                 {(onEditar || onCancelar || onConfirmar || onFinalizar) && (
-                                    <td className="px-6 py-4">
-                                        <div className='flex gap-2'>
-                                            {onEditar && ['Solicitacao pendente', 'Confirmado'].includes(item.status) && (
-                                                <div className="relative group inline-block">
-                                                    <button 
-                                                        className={`bg-blue-500 p-2 rounded-md text-white hover:bg-blue-600 flex items-center gap-2 cursor-pointer ${
-                                                            !podeEditarOuCancelar(item.data) && !isAdmin && !isFuncionario ? 'opacity-50 cursor-not-allowed' : ''
-                                                        }`}
-                                                        onClick={() => podeEditarOuCancelar(item.data) ? onEditar(item) : null}
-                                                        disabled={!podeEditarOuCancelar(item.data) && !isAdmin && !isFuncionario}
-                                                    >
-                                                        Editar
-                                                    </button>
-                                                    {!podeEditarOuCancelar(item.data) && !isAdmin && !isFuncionario && (
-                                                        <div className="absolute right-full top-0 mr-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity w-80 z-[9999]">
-                                                            Não é possível editar agendamentos com menos de 2 dias de antecedência. Entre em contato com a empresa para realizar alterações.
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            )}
-
-                                            {onConfirmar && item.status === 'Solicitacao pendente' && (isAdmin || isFuncionario) && (
-                                                <button 
-                                                    className='bg-green-500 p-2 rounded-md text-white hover:bg-green-600 cursor-pointer'
-                                                    onClick={() => onConfirmar(item)}
-                                                >
-                                                    Confirmar
-                                                </button>
-                                            )}
-
-                                            {onFinalizar && item.status === 'Confirmado' && (isAdmin || isFuncionario) && (
-                                                <button 
-                                                    className='bg-blue-500 p-2 rounded-md text-white hover:bg-blue-600 cursor-pointer'
-                                                    onClick={() => onFinalizar(item)}
-                                                >
-                                                    Finalizar
-                                                </button>
-                                            )}
-
-                                            {onCancelar && ['Solicitacao pendente', 'Confirmado'].includes(item.status) && (
-                                                <div className="relative group inline-block">
-                                                    <button 
-                                                        className={`bg-red-500 p-2 rounded-md text-white hover:bg-red-600 cursor-pointer ${
-                                                            !podeEditarOuCancelar(item.data) && !isAdmin && !isFuncionario ? 'opacity-50 cursor-not-allowed' : ''
-                                                        }`}
-                                                        onClick={() => podeEditarOuCancelar(item.data) ? onCancelar(item) : null}
-                                                        disabled={!podeEditarOuCancelar(item.data) && !isAdmin && !isFuncionario}
-                                                    >
-                                                        Cancelar
-                                                    </button>
-                                                    {!podeEditarOuCancelar(item.data) && !isAdmin && !isFuncionario && (
-                                                        <div className="absolute right-full top-0 mr-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity w-80 z-[9999]">
-                                                            Não é possível cancelar agendamentos com menos de 2 dias de antecedência. Entre em contato com a empresa para realizar alterações.
-                                                        </div>
-                                                    )}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </td>
+                                    <th className="px-6 py-3 text-left">Ações</th>
                                 )}
                             </tr>
-                        ))}
-                    </tbody>
-                </table>
+                        </thead>
+                        <tbody>
+                            {dadosPaginados.map((item) => (
+                                <tr key={item.id} className="hover:bg-gray-50">
+                                    {colunas.map((coluna, index) => (
+                                        <td key={index} className={`px-6 py-4 ${
+                                            coluna.accessor === 'status' ? getcorStatus(item.status) : 
+                                            coluna.accessor === 'valor' ? 'text-green-400' : ''
+                                        }`}>
+                                            {coluna.render 
+                                                ? coluna.render(item)
+                                                : coluna.accessor === 'valor' 
+                                                    ? `R$${item[coluna.accessor]},00`
+                                                    : item[coluna.accessor]}
+                                        </td>
+                                    ))}
+                                    {(onEditar || onCancelar || onConfirmar || onFinalizar) && (
+                                        <td className="px-6 py-4">
+                                            <div className='flex gap-2'>
+                                                {onEditar && ['Solicitacao pendente', 'Confirmado'].includes(item.status) && (
+                                                    <div className="relative group inline-block">
+                                                        <button 
+                                                            className={`bg-blue-500 p-2 rounded-md text-white hover:bg-blue-600 flex items-center gap-2 cursor-pointer ${
+                                                                !podeEditarOuCancelar(item.data) && !isAdmin && !isFuncionario ? 'opacity-50 cursor-not-allowed' : ''
+                                                            }`}
+                                                            onClick={() => podeEditarOuCancelar(item.data) ? onEditar(item) : null}
+                                                            disabled={!podeEditarOuCancelar(item.data) && !isAdmin && !isFuncionario}
+                                                        >
+                                                            Editar
+                                                        </button>
+                                                        {!podeEditarOuCancelar(item.data) && !isAdmin && !isFuncionario && (
+                                                            <div className="absolute right-full top-0 mr-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity w-80 z-[9999]">
+                                                                Não é possível editar agendamentos com menos de 2 dias de antecedência. Entre em contato com a empresa para realizar alterações.
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
 
-                <div className="flex items-center justify-between px-6 py-3 bg-gray-50">
-                    <div className="flex items-center gap-2">
-                        <span className="text-sm text-gray-700">
-                            {dados.length > 0 
-                                ? `Mostrando ${indiceInicial + 1} até ${Math.min(indiceFinal, dados.length)} de ${dados.length} registros`
-                                : 'Nenhum registro encontrado'
-                            }
-                        </span>
+                                                {onConfirmar && item.status === 'Solicitacao pendente' && (isAdmin || isFuncionario) && (
+                                                    <button 
+                                                        className='bg-green-500 p-2 rounded-md text-white hover:bg-green-600 cursor-pointer'
+                                                        onClick={() => onConfirmar(item)}
+                                                    >
+                                                        Confirmar
+                                                    </button>
+                                                )}
+
+                                                {onFinalizar && item.status === 'Confirmado' && (isAdmin || isFuncionario) && (
+                                                    <button 
+                                                        className='bg-blue-500 p-2 rounded-md text-white hover:bg-blue-600 cursor-pointer'
+                                                        onClick={() => onFinalizar(item)}
+                                                    >
+                                                        Finalizar
+                                                    </button>
+                                                )}
+
+                                                {onCancelar && ['Solicitacao pendente', 'Confirmado'].includes(item.status) && (
+                                                    <div className="relative group inline-block">
+                                                        <button 
+                                                            className={`bg-red-500 p-2 rounded-md text-white hover:bg-red-600 cursor-pointer ${
+                                                                !podeEditarOuCancelar(item.data) && !isAdmin && !isFuncionario ? 'opacity-50 cursor-not-allowed' : ''
+                                                            }`}
+                                                            onClick={() => podeEditarOuCancelar(item.data) ? onCancelar(item) : null}
+                                                            disabled={!podeEditarOuCancelar(item.data) && !isAdmin && !isFuncionario}
+                                                        >
+                                                            Cancelar
+                                                        </button>
+                                                        {!podeEditarOuCancelar(item.data) && !isAdmin && !isFuncionario && (
+                                                            <div className="absolute right-full top-0 mr-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity w-80 z-[9999]">
+                                                                Não é possível cancelar agendamentos com menos de 2 dias de antecedência. Entre em contato com a empresa para realizar alterações.
+                                                            </div>
+                                                        )}
+                                                    </div>
+                                                )}
+                                            </div>
+                                        </td>
+                                    )}
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                
+                <div className="flex flex-col sm:flex-row items-center justify-between px-4 py-3 bg-gray-50 gap-2">
+                    <div className="text-sm text-gray-700 w-full sm:w-auto text-center sm:text-left">
+                        {dados.length > 0 
+                            ? `Mostrando ${indiceInicial + 1} até ${Math.min(indiceFinal, dados.length)} de ${dados.length} registros`
+                            : 'Nenhum registro encontrado'
+                        }
                     </div>
                     <div className="flex items-center gap-2">
                         <button
