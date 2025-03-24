@@ -80,15 +80,44 @@ export class AgendamentoService {
         this.repository.updateStatus(id, novoStatus, usuarioLogado, observacao);
     }
 
+    private getAgendamentosDaSemana(usuarioId: string, data: string): Agendamento[] {
+        const agendamentos = this.repository.getAllByUsuario(usuarioId);
+        const dataReferencia = new Date(data);
+        const inicioSemana = new Date(dataReferencia);
+        inicioSemana.setDate(dataReferencia.getDate() - dataReferencia.getDay()); // Domingo
+        const fimSemana = new Date(inicioSemana);
+        fimSemana.setDate(inicioSemana.getDate() + 6); // Sábado
+
+        return agendamentos.filter(agendamento => {
+            const dataAgendamento = new Date(agendamento.data);
+            return dataAgendamento >= inicioSemana && dataAgendamento <= fimSemana;
+        });
+    }
+
     salvarAgendamento(dados: NovoAgendamento, id?: string): void {
         const usuarioLogado = this.usuarioRepository.getUsuarioLogado();
         if (!usuarioLogado) throw new Error('Usuário não está logado');
 
         const agendamentos = this.repository.getAll();
         
+        // Verifica se já existe agendamento na mesma semana
+        const agendamentosDaSemana = this.getAgendamentosDaSemana(usuarioLogado.id, dados.data);
+        
+        let dataAgendamento = dados.data;
+        let horarioAgendamento = dados.horario;
+
+        if (agendamentosDaSemana.length > 0 && !id) {
+            // Se já existe agendamento na semana e não é uma edição,
+            // usa a mesma data do primeiro agendamento da semana
+            const primeiroAgendamento = agendamentosDaSemana[0];
+            dataAgendamento = primeiroAgendamento.data;
+        }
+
         const novoAgendamento: Agendamento = {
             id: id || new Date().getTime().toString(),
             ...dados,
+            data: dataAgendamento,
+            horario: horarioAgendamento,
             status: 'Solicitacao pendente',
             solicitadoPor: {
                 nome: usuarioLogado.nome,

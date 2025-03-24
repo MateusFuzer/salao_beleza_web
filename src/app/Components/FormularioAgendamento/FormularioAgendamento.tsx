@@ -15,6 +15,7 @@ const FormularioAgendamento = ({ agendamento }: FormularioAgendamentoProps) => {
     const [data, setData] = useState('');
     const [hora, setHora] = useState('');
     const [valor, setValor] = useState(20);
+    const [dataAjustada, setDataAjustada] = useState(false);
 
     const controller = new AgendamentoController();
     const usuarioRepository = new UsuarioRepository();
@@ -45,14 +46,8 @@ const FormularioAgendamento = ({ agendamento }: FormularioAgendamentoProps) => {
 
         try {
             const usuarioLogado = usuarioRepository.getUsuarioLogado();
-            console.log('Usuário logado (handleSubmit):', usuarioLogado); // Debug
             
             if (!usuarioLogado || !usuarioLogado.id) {
-                // Vamos verificar o que está no localStorage
-                console.log('localStorage:', {
-                    usuarioLogado: localStorage.getItem('usuarioLogado'),
-                    usuarios: localStorage.getItem('usuarios')
-                });
                 alert('Você precisa estar logado para fazer um agendamento');
                 return;
             }
@@ -64,21 +59,25 @@ const FormularioAgendamento = ({ agendamento }: FormularioAgendamentoProps) => {
                 data,
                 horario: hora,
                 valor: Number(valor),
-                usuarioId: usuarioLogado.id // Passa o ID do usuário explicitamente
+                usuarioId: usuarioLogado.id
             }, agendamento?.id);
 
             // Limpa o formulário
-            setNome(usuarioLogado.nome); // Mantém o nome do usuário
+            setNome(usuarioLogado.nome);
             setTelefone('');
             setServico('Unha');
             setData('');
             setHora('');
             setValor(20);
 
-            alert('Agendamento salvo com sucesso!');
+            if (dataAjustada) {
+                alert('Seu agendamento foi salvo com sucesso! A data foi ajustada para coincidir com seu outro agendamento na mesma semana.');
+            } else {
+                alert('Agendamento salvo com sucesso!');
+            }
+            
             window.location.reload();
         } catch (error) {
-            console.error('Erro completo:', error); // Debug mais detalhado
             if (error instanceof Error) {
                 alert(error.message);
             } else {
