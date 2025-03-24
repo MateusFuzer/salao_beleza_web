@@ -8,6 +8,11 @@ export interface Agendamento {
     valor: number;
     status: string;
     usuarioId: string;
+    canceladoPor?: {
+        nome: string;
+        data: string;
+        hora: string;
+    };
 }
 
 export class AgendamentoRepository {
@@ -27,11 +32,21 @@ export class AgendamentoRepository {
         localStorage.setItem(this.STORAGE_KEY, JSON.stringify(agendamentos));
     }
 
-    updateStatus(id: string, status: string): void {
+    updateStatus(id: string, status: string, usuarioCancelamento?: Usuario): void {
         const agendamentos = this.getAll();
         const agendamentosAtualizados = agendamentos.map(ag => {
             if (ag.id === id) {
-                return { ...ag, status };
+                const canceladoPor = status === 'Cancelado' && usuarioCancelamento ? {
+                    nome: usuarioCancelamento.nome,
+                    data: new Date().toISOString().split('T')[0],
+                    hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+                } : undefined;
+
+                return { 
+                    ...ag, 
+                    status,
+                    canceladoPor 
+                };
             }
             return ag;
         });

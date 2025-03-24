@@ -45,7 +45,10 @@ export class AgendamentoService {
     }
 
     cancelarAgendamento(id: string): void {
-        this.repository.updateStatus(id, 'Cancelado');
+        const usuarioLogado = this.usuarioRepository.getUsuarioLogado();
+        if (!usuarioLogado) throw new Error('Usuário não está logado');
+
+        this.repository.updateStatus(id, 'Cancelado', usuarioLogado);
     }
 
     editarAgendamento(agendamento: Agendamento): AgendamentoComCliente {
@@ -102,5 +105,12 @@ export class AgendamentoService {
             const dataB = new Date(`${b.data}T${b.horario}`);
             return dataB.getTime() - dataA.getTime();
         });
+    }
+
+    finalizarAgendamento(id: string): void {
+        const usuarioLogado = this.usuarioRepository.getUsuarioLogado();
+        if (!usuarioLogado) throw new Error('Usuário não está logado');
+
+        this.repository.updateStatus(id, 'Finalizado', usuarioLogado);
     }
 } 

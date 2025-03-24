@@ -98,6 +98,15 @@ export default function HistoricoDeAgendamentos() {
                                 <p><strong>Telefone:</strong> {agendamentoSelecionado.telefone}</p>
                                 <p><strong>Valor:</strong> R$ {agendamentoSelecionado.valor}</p>
                                 <p><strong>Status:</strong> {agendamentoSelecionado.status}</p>
+                                
+                                {agendamentoSelecionado.status === 'Cancelado' && agendamentoSelecionado.canceladoPor && (
+                                    <div className="mt-4 pt-4 border-t border-gray-200">
+                                        <h4 className="font-semibold text-gray-700 mb-2">Informações do Cancelamento</h4>
+                                        <p><strong>Cancelado por:</strong> {agendamentoSelecionado.canceladoPor.nome}</p>
+                                        <p><strong>Data:</strong> {agendamentoSelecionado.canceladoPor.data}</p>
+                                        <p><strong>Hora:</strong> {agendamentoSelecionado.canceladoPor.hora}</p>
+                                    </div>
+                                )}
                             </div>
                             <div className="text-center mt-6">
                                 <button
