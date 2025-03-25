@@ -17,7 +17,7 @@ export class HistoricoService {
 
         const agendamentos = this.repository.getAll();
        
-        const agendamentosFiltrados = usuarioLogado.tipo === 'ADMIN'
+        const agendamentosFiltrados = usuarioLogado.tipo === 'ADMIN' || usuarioLogado.tipo === 'FUNCIONARIO'
             ? agendamentos
             : agendamentos.filter(ag => ag.usuarioId === usuarioLogado.id);
 

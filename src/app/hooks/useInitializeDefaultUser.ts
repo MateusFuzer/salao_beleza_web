@@ -19,7 +19,7 @@ const usuariosPadrao: Usuario[] = [
         tipo: 'USUARIO'
     },
     {
-        id: '2',
+        id: '3',
         nome: 'Paula Santos',
         usuario: 'paula',
         email: 'paula@email.com',
@@ -27,7 +27,7 @@ const usuariosPadrao: Usuario[] = [
         tipo: 'USUARIO'
     },
     {
-        id: '2',
+        id: '4',
         nome: 'Beatriz Pereira',
         usuario: 'beatriz',
         email: 'beatriz@email.com',
@@ -35,7 +35,7 @@ const usuariosPadrao: Usuario[] = [
         tipo: 'USUARIO'
     },
     {
-        id: '3',
+        id: '5',
         nome: 'Atendente',
         usuario: 'atendente',
         email: 'func@email.com',

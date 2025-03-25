@@ -43,11 +43,19 @@ O sistema já vem com 3 usuários pré-cadastrados para teste:
    - Senha: admin
 
 2. **Funcionário**
-   - Usuário: func
+   - Usuário: atendente
    - Senha: 123456
 
 3. **Cliente**
    - Usuário: maria
+   - Senha: 123456
+   - 
+3. **Cliente**
+   - Usuário: beatriz
+   - Senha: 123456
+   - 
+3. **Cliente**
+   - Usuário: paula
    - Senha: 123456
 
 ## Funcionalidades
