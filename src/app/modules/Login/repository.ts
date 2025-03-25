@@ -40,7 +40,6 @@ export class UsuarioRepository {
             const usuario = JSON.parse(usuarioLogado);
             return usuario;
         } catch (error) {
-            console.error('Erro ao parsear usuário:', error);
             return null;
         }
     }

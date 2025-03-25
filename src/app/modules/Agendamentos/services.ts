@@ -2,7 +2,6 @@ import { Agendamento, AgendamentoRepository } from './repository';
 import { UsuarioRepository } from '../Login/repository';
 import { Usuario } from '../Login/repository';
 
-// Interface para o agendamento com o campo cliente
 export interface AgendamentoComCliente extends Agendamento {
     cliente: string;
 }
@@ -78,62 +77,95 @@ export class AgendamentoService {
         return false;
     }
 
+    private verificarEAjustarDataAgendamento(dados: NovoAgendamento): { dados: NovoAgendamento, dataAjustada: boolean } {
+        const agendamentosDaSemana = this.getAgendamentosDaSemana(dados.usuarioId, dados.data);
+        
+        const outrosAgendamentosDaSemana = agendamentosDaSemana.filter(ag => 
+            ag.usuarioId === dados.usuarioId && 
+            ag.data !== dados.data
+        );
+        
+        if (outrosAgendamentosDaSemana.length > 0) {
+            const agendamentoExistente = outrosAgendamentosDaSemana[0];
+            
+            return {
+                dados: {
+                    ...dados,
+                    data: agendamentoExistente.data
+                },
+                dataAjustada: true
+            };
+        }
+
+        return { dados, dataAjustada: false };
+    }
+
     private getAgendamentosDaSemana(usuarioId: string, data: string): Agendamento[] {
         const agendamentos = this.repository.getAllByUsuario(usuarioId);
         const dataReferencia = new Date(data);
         const inicioSemana = new Date(dataReferencia);
-        inicioSemana.setDate(dataReferencia.getDate() - dataReferencia.getDay()); // Domingo
+        inicioSemana.setDate(dataReferencia.getDate() - dataReferencia.getDay());
         const fimSemana = new Date(inicioSemana);
-        fimSemana.setDate(inicioSemana.getDate() + 6); // Sábado
+        fimSemana.setDate(inicioSemana.getDate() + 6);
 
         return agendamentos.filter(agendamento => {
             const dataAgendamento = new Date(agendamento.data);
-            return dataAgendamento >= inicioSemana && dataAgendamento <= fimSemana;
+            return (
+                dataAgendamento >= inicioSemana && 
+                dataAgendamento <= fimSemana &&
+                agendamento.status !== 'Cancelado' &&
+                agendamento.status !== 'Finalizado'
+            );
         });
     }
 
-    salvarAgendamento(dados: NovoAgendamento, id?: string): void {
+    salvarAgendamento(dados: NovoAgendamento, id?: string): { success: boolean, dataAjustada: boolean } {
         const usuarioLogado = this.usuarioRepository.getUsuarioLogado();
         if (!usuarioLogado) throw new Error('Usuário não está logado');
 
         const agendamentos = this.repository.getAll();
         
-        // Verifica se já existe agendamento na mesma semana
-        const agendamentosDaSemana = this.getAgendamentosDaSemana(usuarioLogado.id, dados.data);
-        
-        let dataAgendamento = dados.data;
-        let horarioAgendamento = dados.horario;
-
-        if (agendamentosDaSemana.length > 0 && !id) {
-            // Se já existe agendamento na semana e não é uma edição,
-            // usa a mesma data do primeiro agendamento da semana
-            const primeiroAgendamento = agendamentosDaSemana[0];
-            dataAgendamento = primeiroAgendamento.data;
-        }
-
-        const novoAgendamento: Agendamento = {
-            id: id || new Date().getTime().toString(),
-            ...dados,
-            data: dataAgendamento,
-            horario: horarioAgendamento,
-            status: 'Solicitacao pendente',
-            solicitadoPor: {
-                nome: usuarioLogado.nome,
-                data: new Date().toISOString().split('T')[0],
-                hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
-            }
-        };
-
         if (id) {
-            const index = agendamentos.findIndex(a => a.id === id);
-            if (index !== -1) {
-                agendamentos[index] = novoAgendamento;
+            const agendamentoExistente = agendamentos.find(a => a.id === id);
+            if (!agendamentoExistente) {
+                throw new Error('Agendamento não encontrado');
             }
-        } else {
-            agendamentos.push(novoAgendamento);
-        }
 
-        this.repository.save(agendamentos);
+            const { dados: dadosAjustados, dataAjustada } = this.verificarEAjustarDataAgendamento(dados);
+
+            const agendamentoAtualizado = {
+                ...agendamentoExistente,
+                ...dadosAjustados,
+                id,
+                usuarioId: agendamentoExistente.usuarioId,
+                status: agendamentoExistente.status
+            };
+
+            const agendamentosAtualizados = agendamentos.map(ag => 
+                ag.id === id ? agendamentoAtualizado : ag
+            );
+
+            this.repository.save(agendamentosAtualizados);
+            return { success: true, dataAjustada };
+        } else {
+            const { dados: dadosAjustados, dataAjustada } = this.verificarEAjustarDataAgendamento(dados);
+
+            const novoAgendamento: Agendamento = {
+                id: new Date().getTime().toString(),
+                ...dadosAjustados,
+                status: 'Solicitacao pendente',
+                usuarioId: dados.usuarioId,
+                solicitadoPor: {
+                    nome: usuarioLogado.nome,
+                    data: new Date().toISOString().split('T')[0],
+                    hora: new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })
+                }
+            };
+
+            agendamentos.push(novoAgendamento);
+            this.repository.save(agendamentos);
+            return { success: true, dataAjustada };
+        }
     }
 
     calcularValorServico(servico: string): number {
@@ -151,7 +183,6 @@ export class AgendamentoService {
 
         const agendamentos = this.repository.getAll();
         
-        // Filtra por status e aplica regra de permissão
         const agendamentosFiltrados = (usuarioLogado.tipo === 'ADMIN' 
             ? agendamentos 
             : agendamentos.filter(ag => ag.usuarioId === usuarioLogado.id))

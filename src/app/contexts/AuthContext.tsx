@@ -79,7 +79,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     if (isLoading) {
-        return null; // ou um componente de loading
+        return null; 
     }
 
     return (

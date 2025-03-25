@@ -129,6 +129,7 @@ export default function HistoricoDeAgendamentos() {
                                             {agendamentoSelecionado.solicitadoPor.nome} em {agendamentoSelecionado.solicitadoPor.data} às {agendamentoSelecionado.solicitadoPor.hora}
                                         </p>
                                     </div>
+                                    
                                     {agendamentoSelecionado.confirmadoPor && (
                                         <div>
                                             <p className="text-sm text-gray-500">Confirmado por</p>
@@ -137,6 +138,7 @@ export default function HistoricoDeAgendamentos() {
                                             </p>
                                         </div>
                                     )}
+
                                     {agendamentoSelecionado.finalizadoPor && (
                                         <div>
                                             <p className="text-sm text-gray-500">Finalizado por</p>
@@ -145,6 +147,7 @@ export default function HistoricoDeAgendamentos() {
                                             </p>
                                         </div>
                                     )}
+
                                     {agendamentoSelecionado.canceladoPor && (
                                         <div>
                                             <p className="text-sm text-gray-500">Cancelado por</p>

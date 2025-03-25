@@ -22,7 +22,6 @@ const FormularioAgendamento = ({ agendamento }: FormularioAgendamentoProps) => {
 
     useEffect(() => {
         const usuarioLogado = usuarioRepository.getUsuarioLogado();
-        console.log('Usuário logado (useEffect):', usuarioLogado); // Debug
         if (usuarioLogado) {
             setNome(usuarioLogado.nome);
         }
@@ -50,7 +49,7 @@ const FormularioAgendamento = ({ agendamento }: FormularioAgendamentoProps) => {
                 return;
             }
 
-            controller.handleSubmit({
+            const result = controller.handleSubmit({
                 nome,
                 telefone,
                 servico,
@@ -67,7 +66,7 @@ const FormularioAgendamento = ({ agendamento }: FormularioAgendamentoProps) => {
             setHora('');
             setValor(20);
 
-            if (dataAjustada) {
+            if (result.dataAjustada) {
                 alert('Seu agendamento foi salvo com sucesso! A data foi ajustada para coincidir com seu outro agendamento na mesma semana.');
             } else {
                 alert('Agendamento salvo com sucesso!');

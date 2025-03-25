@@ -53,7 +53,10 @@ export class AgendamentoRepository {
 
         const agendamentosAtualizados = agendamentos.map(ag => {
             if (ag.id === id) {
-                const atualizacao: Partial<Agendamento> = { status };
+                const atualizacao: Partial<Agendamento> = { 
+                    ...ag,
+                    status 
+                };
 
                 switch (status) {
                     case 'Confirmado':

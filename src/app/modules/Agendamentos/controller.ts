@@ -24,8 +24,8 @@ export class AgendamentoController {
         return this.service.editarAgendamento(agendamento);
     }
 
-    handleSubmit(dados: NovoAgendamento, id?: string): void {
-        this.service.salvarAgendamento(dados, id);
+    handleSubmit(dados: NovoAgendamento, id?: string): { success: boolean, dataAjustada: boolean } {
+        return this.service.salvarAgendamento(dados, id);
     }
 
     calcularValorServico(servico: string): number {
