@@ -1,36 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Salão da Leila - Sistema de Agendamentos
 
-## Getting Started
+## Pré-requisitos
 
-First, run the development server:
+- [Node.js](https://nodejs.org/) versão v23.10.0
+  - Para instalar o Node.js, acesse [https://nodejs.org/download/release/v23.10.0/](https://nodejs.org/download/release/v23.10.0/)
+  - Ou use o NVM (Node Version Manager):
+    ```bash
+    nvm install 23.10.0
+    nvm use 23.10.0
+    ```
+
+## Instalação
+
+1. Clone o repositório
+```bash
+git clone https://github.com/MateusFuzer/salao_beleza_web
+cd salao_beleza_web
+```
+
+2. Instale as dependências
+```bash
+npm install
+```
+
+## Executando o Projeto
+
+Para rodar o projeto em ambiente de produção:
+
+```bash
+npm run deploy
+```
+
+Após a execução, acesse o sistema em:
+[http://localhost:3000](http://localhost:3000)
+
+## Usuários Padrão
+
+O sistema já vem com 3 usuários pré-cadastrados para teste:
+
+1. **Administrador**
+   - Usuário: admin
+   - Senha: admin
+
+2. **Funcionário**
+   - Usuário: func
+   - Senha: 123456
+
+3. **Cliente**
+   - Usuário: maria
+   - Senha: 123456
+
+## Funcionalidades
+
+- Sistema de login e autenticação
+- Gerenciamento de agendamentos
+- Histórico de agendamentos
+- Relatório semanal (apenas admin)
+- Configurações de usuários (apenas admin)
+
+## Estrutura do Projeto
+
+```
+src/
+├── app/
+│   ├── components/      # Componentes reutilizáveis
+│   ├── contexts/        # Contextos React (AuthContext)
+│   ├── modules/         # Módulos principais do sistema
+│   └── hooks/          # Hooks customizados
+```
+
+## Tecnologias Utilizadas
+
+- Next.js 15.2.3
+- React 19
+- TypeScript
+- TailwindCSS
+- Lucide React (ícones)
+
+## Desenvolvimento
+
+Para rodar o projeto em ambiente de desenvolvimento:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+O sistema estará disponível em [http://localhost:3000](http://localhost:3000)
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Observações Importantes
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- O sistema utiliza localStorage como banco de dados
+- Recomendado usar navegadores modernos Chrome
