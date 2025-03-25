@@ -121,6 +121,13 @@ export default function Agendamentos() {
         }
     };
 
+    const podeEditarOuCancelar = (data: string) => {
+        const dataAgendamento = new Date(data);
+        const dataAtual = new Date();
+        const diferencaEmDias = Math.ceil((dataAgendamento.getTime() - dataAtual.getTime()) / (1000 * 60 * 60 * 24));
+        return diferencaEmDias >= 2;
+    };
+
     const colunas = [
         { header: 'Nome', accessor: 'nome' as keyof TabelaAgendamento },
         { header: 'Status', accessor: 'status' as keyof TabelaAgendamento },
@@ -128,7 +135,75 @@ export default function Agendamentos() {
         { header: 'Data', accessor: 'data' as keyof TabelaAgendamento },
         { header: 'Hora', accessor: 'horario' as keyof TabelaAgendamento },
         { header: 'Telefone', accessor: 'telefone' as keyof TabelaAgendamento },
-        { header: 'Valor', accessor: 'valor' as keyof TabelaAgendamento }
+        { header: 'Valor', accessor: 'valor' as keyof TabelaAgendamento },
+        {
+            header: 'Ação',
+            accessor: 'id' as keyof TabelaAgendamento,
+            render: (agendamento: TabelaAgendamento) => {
+                const agendamentoCompleto = agendamentos.find(a => a.id === agendamento.id);
+                if (!agendamentoCompleto) return null;
+                
+                return (
+                    <div className='flex gap-2'>
+                        {['Solicitacao pendente', 'Confirmado'].includes(agendamento.status) && (
+                            <div className="relative group inline-block">
+                                <button 
+                                    className={`bg-blue-500 p-2 rounded-md text-white hover:bg-blue-600 flex items-center gap-2 cursor-pointer ${
+                                        !podeEditarOuCancelar(agendamento.data) && !isAdmin && !isFuncionario ? 'opacity-50 cursor-not-allowed' : ''
+                                    }`}
+                                    onClick={() => podeEditarOuCancelar(agendamento.data) ? handleEditarAgendamento(agendamento) : null}
+                                    disabled={!podeEditarOuCancelar(agendamento.data) && !isAdmin && !isFuncionario}
+                                >
+                                    Editar
+                                </button>
+                                {!podeEditarOuCancelar(agendamento.data) && !isAdmin && !isFuncionario && (
+                                    <div className="absolute right-full top-0 mr-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity w-80 z-[9999]">
+                                        Não é possível editar agendamentos com menos de 2 dias de antecedência. Entre em contato com a empresa para realizar alterações.
+                                    </div>
+                                )}
+                            </div>
+                        )}
+
+                        {agendamento.status === 'Solicitacao pendente' && (isAdmin || isFuncionario) && (
+                            <button 
+                                className='bg-green-500 p-2 rounded-md text-white hover:bg-green-600 cursor-pointer'
+                                onClick={() => handleConfirmar(agendamento)}
+                            >
+                                Confirmar
+                            </button>
+                        )}
+
+                        {agendamento.status === 'Confirmado' && (isAdmin || isFuncionario) && (
+                            <button 
+                                className='bg-blue-500 p-2 rounded-md text-white hover:bg-blue-600 cursor-pointer'
+                                onClick={() => handleFinalizar(agendamento)}
+                            >
+                                Finalizar
+                            </button>
+                        )}
+
+                        {['Solicitacao pendente', 'Confirmado'].includes(agendamento.status) && (
+                            <div className="relative group inline-block">
+                                <button 
+                                    className={`bg-red-500 p-2 rounded-md text-white hover:bg-red-600 cursor-pointer ${
+                                        !podeEditarOuCancelar(agendamento.data) && !isAdmin && !isFuncionario ? 'opacity-50 cursor-not-allowed' : ''
+                                    }`}
+                                    onClick={() => podeEditarOuCancelar(agendamento.data) ? handleCancelar(agendamento) : null}
+                                    disabled={!podeEditarOuCancelar(agendamento.data) && !isAdmin && !isFuncionario}
+                                >
+                                    Cancelar
+                                </button>
+                                {!podeEditarOuCancelar(agendamento.data) && !isAdmin && !isFuncionario && (
+                                    <div className="absolute right-full top-0 mr-2 px-3 py-2 bg-gray-900 text-white text-sm rounded-md opacity-0 group-hover:opacity-100 transition-opacity w-80 z-[9999]">
+                                        Não é possível cancelar agendamentos com menos de 2 dias de antecedência. Entre em contato com a empresa para realizar alterações.
+                                    </div>
+                                )}
+                            </div>
+                        )}
+                    </div>
+                );
+            }
+        }
     ];
 
     return (
