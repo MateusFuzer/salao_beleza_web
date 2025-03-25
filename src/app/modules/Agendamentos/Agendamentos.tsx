@@ -25,7 +25,6 @@ export default function Agendamentos() {
     const [showFinalizeModal, setShowFinalizeModal] = useState(false);
     const [agendamentoParaFinalizar, setAgendamentoParaFinalizar] = useState<Agendamento | null>(null);
     const { isAdmin, isFuncionario } = useAuth();
-    const usuarioRepository = new UsuarioRepository();
     const controller = new AgendamentoController();
 
     const loadAgendamentos = () => {
@@ -35,15 +34,6 @@ export default function Agendamentos() {
 
     useEffect(() => {
         loadAgendamentos();
-    }, []);
-
-    useEffect(() => {
-        const handleAuthChange = () => {
-            loadAgendamentos();
-        };
-
-        window.addEventListener('authChange', handleAuthChange);
-        return () => window.removeEventListener('authChange', handleAuthChange);
     }, []);
 
     const handleEditarAgendamento = (agendamento: TabelaAgendamento) => {

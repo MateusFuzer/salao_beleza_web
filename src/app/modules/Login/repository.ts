@@ -22,10 +22,6 @@ export class UsuarioRepository {
         return savedUsuarios ? JSON.parse(savedUsuarios) : [];
     }
 
-    getByEmail(email: string): Usuario | undefined {
-        const usuarios = this.getAll();
-        return usuarios.find(u => u.email === email);
-    }
 
     getByUsuario(usuario: string): Usuario | undefined {
         const usuarios = this.getAll();

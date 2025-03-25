@@ -32,14 +32,6 @@ export default function HistoricoDeAgendamentos() {
         loadAgendamentos();
     }, []);
 
-    useEffect(() => {
-        const handleAuthChange = () => {
-            loadAgendamentos();
-        };
-
-        window.addEventListener('authChange', handleAuthChange);
-        return () => window.removeEventListener('authChange', handleAuthChange);
-    }, []);
 
     const handleVisualizarDetalhes = (agendamento: HistoricoAgendamento) => {
         setAgendamentoSelecionado(agendamento);

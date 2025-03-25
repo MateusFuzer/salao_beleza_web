@@ -35,25 +35,23 @@ export default function RootLayoutClient({
 
   return (
     <AuthProvider>
-      <html lang="en" className={`${geistSans.variable} ${geistMono.variable} ${greatVibes.variable} antialiased`}>
-        <body>
-          {isLoginPage ? (
-            children
-          ) : (
-            <div className="min-h-screen w-full">
-              <header className="h-[60px] w-full">
-                <Header/>
-              </header>
-              <div className="flex flex-col md:flex-row w-full min-h-[calc(100vh-60px)]">
-                <div className="w-full md:w-[250px] md:min-h-full">
-                  <Aside />
-                </div>
-                <main className="flex-1 p-2 md:p-4 overflow-x-auto">{children}</main>
+      <div className={`${geistSans.variable} ${geistMono.variable} ${greatVibes.variable} antialiased`}>
+        {isLoginPage ? (
+          children
+        ) : (
+          <div className="min-h-screen w-full">
+            <header className="h-[60px] w-full">
+              <Header/>
+            </header>
+            <div className="flex flex-col md:flex-row w-full min-h-[calc(100vh-60px)]">
+              <div className="w-full md:w-[250px] md:min-h-full">
+                <Aside />
               </div>
+              <main className="flex-1 p-2 md:p-4 overflow-x-auto">{children}</main>
             </div>
-          )}
-        </body>
-      </html>
+          </div>
+        )}
+      </div>
     </AuthProvider>
   );
 } 

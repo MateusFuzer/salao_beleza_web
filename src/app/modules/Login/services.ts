@@ -18,9 +18,6 @@ export class AuthService {
         return null;
     }
 
-    verificarLogin(): Usuario | null {
-        return this.repository.getUsuarioLogado();
-    }
 
     cadastrar(dados: Omit<Usuario, 'id'>): Usuario {
         const novoUsuario: Usuario = {
